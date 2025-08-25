@@ -1,4 +1,7 @@
 import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 
 // ➕ Créer un utilisateur
 export const createUser = async (req, res) => {
