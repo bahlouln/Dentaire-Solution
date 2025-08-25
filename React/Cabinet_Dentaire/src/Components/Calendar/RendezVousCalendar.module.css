@@ -1,0 +1,70 @@
+/* Conteneur du calendrier */
+.calendarContainer {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #b1afa7de; /* fond clair */
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.calendarContainer:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Titre général */
+.title {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+/* FullCalendar : titre mois + année */
+.fc .fc-toolbar-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50 !important; /* titre sombre et lisible */
+}
+
+/* FullCalendar : boutons (prev, next, today) */
+.fc .fc-button {
+  background: #4CAF50 !important; /* vert doux */
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 6px 12px !important;
+  color: #fff !important;
+  transition: background 0.2s;
+}
+
+.fc .fc-button:hover {
+  background: #388E3C !important;
+}
+
+/* Jours du calendrier */
+.fc .fc-daygrid-day {
+  transition: background 0.2s;
+}
+
+.fc .fc-daygrid-day:hover {
+  background: #e0e0e0; /* gris clair au survol */
+}
+
+/* Événements */
+.fc .fc-event {
+  background-color: #FF9800; /* orange doux */
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  padding: 2px 6px;
+  transition: all 0.2s;
+  color: #fff;
+}
+
+.fc .fc-event:hover {
+  background-color: #F57C00; /* orange plus foncé */
+  transform: scale(1.05);
+}
