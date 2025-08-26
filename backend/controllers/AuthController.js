@@ -5,9 +5,7 @@ import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   try {
     const { nom, email, motDePasse, role } = req.body;
-
     const user = await User.create({ nom, email, motDePasse, role });
-
     res.status(201).json({ message: "Utilisateur créé", user });
   } catch (err) {
     res.status(400).json({ message: "Erreur inscription", error: err.message });
@@ -17,7 +15,6 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { email, motDePasse } = req.body;
-
     const user = await User.findOne({ where: { email } });
     if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
@@ -26,7 +23,7 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, role: user.role },
-      "SECRET_KEY", // ⚠️ mets une vraie clé secrète dans .env
+      process.env.SECRET_KEY, // Utilise la variable d'environnement
       { expiresIn: "1d" }
     );
 

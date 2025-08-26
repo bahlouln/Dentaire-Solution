@@ -6,14 +6,14 @@ import {
   updateRendezVous,
   deleteRendezVous,
 } from "../controllers/RendezVousController.js";
-
+import authMiddleware from "../middlewares/authMiddleware.js"; // 👈 importer middleware
+//seuls les utilisateurs connectés puissent gérer les rendez-vous.
 const router = express.Router();
 
-// Routes
-router.post("/", createRendezVous);        // ➕ Ajouter rendez-vous
-router.get("/", getRendezVous);           // 📋 Liste rendez-vous
-router.get("/:id", getRendezVousById);    // 🔍 Un rendez-vous
-router.put("/:id", updateRendezVous);     // ✏️ Modifier
-router.delete("/:id", deleteRendezVous);  // ❌ Supprimer
-
+// Routes protégées
+router.post("/", authMiddleware, createRendezVous);   // ➕ Ajouter rendez-vous (protégé)
+router.get("/", authMiddleware, getRendezVous);       // 📋 Liste rendez-vous
+router.get("/:id", authMiddleware, getRendezVousById);
+router.put("/:id", authMiddleware, updateRendezVous);
+router.delete("/:id", authMiddleware, deleteRendezVous);
 export default router;

@@ -1,7 +1,6 @@
 import RendezVous from "../models/RendezVous.js";
 import Patient from "../models/Patient.js";
 import Dentiste from "../models/Dentiste.js";
-
 // 📋 Récupérer tous les rendez-vous
 export const getRendezVous = async (req, res) => {
   try {
