@@ -1,12 +1,21 @@
-import axios from 'axios';
+import axios from "axios";
 
 const http = axios.create({
-  baseURL: import.meta.env.VITE_URL, // Assure-toi que .env contient VITE_URL
+  baseURL: import.meta.env.VITE_URL || "http://localhost:5000", 
   timeout: 5000,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
 });
 
-// Interceptor pour retourner directement data
+// ✅ Interceptor pour ajouter le token dynamiquement
+http.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers["Authorization"] = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// ✅ Interceptor pour retourner directement response.data
 http.interceptors.response.use(
   (response) => response.data,
   (error) => Promise.reject(error)
@@ -15,21 +24,13 @@ http.interceptors.response.use(
 export const api = {
   rendezvous: {
     async getAll() {
-      try {
-        return await http.get('/appointment'); // récupère tous les rendez-vous
-      } catch (error) {
-        if (error.response?.status === 404) {
-          throw new Error('Rendez-vous non trouvés');
-        }
-        throw error;
-      }
+      return await http.get("/appointment"); // ✅ cohérent avec backend
     },
     async create(newAppointment) {
-      try {
-        return await http.post('/appointment', newAppointment);
-      } catch (error) {
-        throw error;
-      }
+      return await http.post("/appointment", newAppointment);
+    },
+    async delete(id) {
+      return await http.delete(`/appointment/${id}`); // ✅ corrigé
     },
   },
 };

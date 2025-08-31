@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/appointment': 'http://localhost:3000',
+      '/appointment': 'http://localhost:5000',
     },
   },
 });
