@@ -1,4 +1,5 @@
 import express from "express";
+
 import {
   getRendezVous,
   getRendezVousById,
@@ -9,11 +10,11 @@ import {
 import authMiddleware from "../middlewares/authMiddleware.js"; // 👈 importer middleware
 //seuls les utilisateurs connectés puissent gérer les rendez-vous.
 const router = express.Router();
+router.use(authMiddleware); // toutes les routes nécessitent authentification
 
-// Routes protégées
-router.post("/", authMiddleware, createRendezVous);   // ➕ Ajouter rendez-vous (protégé)
-router.get("/", authMiddleware, getRendezVous);       // 📋 Liste rendez-vous
-router.get("/:id", authMiddleware, getRendezVousById);
-router.put("/:id", authMiddleware, updateRendezVous);
-router.delete("/:id", authMiddleware, deleteRendezVous);
+router.get("/", getRendezVous);
+router.get("/:id", getRendezVousById);
+router.post("/", createRendezVous);
+router.put("/:id", updateRendezVous);
+router.delete("/:id", deleteRendezVous);
 export default router;
