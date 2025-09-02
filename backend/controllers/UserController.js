@@ -1,21 +1,34 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 
+// Fonction générique de création d'utilisateur
+export const createUserGeneric = async ({ nom, email, motDePasse, role }) => {
+  if (!nom || !email || !motDePasse) {
+    throw new Error("Champs requis manquants");
+  }
 
-// ➕ Créer un utilisateur
+  // Hash du mot de passe
+  const hashedPassword = await bcrypt.hash(motDePasse, 10);
+
+  const newUser = await User.create({
+    nom,
+    email,
+    motDePasse: hashedPassword,
+    role: role || "dentiste",
+  });
+
+  return newUser;
+};
+
+// ➕ Créer un utilisateur (API)
 export const createUser = async (req, res) => {
   try {
     const { nom, email, motDePasse, role } = req.body;
-    if (!nom || !email || !motDePasse) {
-      return res.status(400).json({ message: "Champs requis manquants" });
-    }
-
-    const newUser = await User.create({ nom, email, motDePasse, role: role || "dentiste" });
+    const newUser = await createUserGeneric({ nom, email, motDePasse, role });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur", error });
+    res.status(500).json({ message: "Erreur lors de la création de l'utilisateur", error: error.message });
   }
 };
 
@@ -45,6 +58,11 @@ export const updateUser = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id);
     if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    // Si motDePasse modifié → rehash
+    if (req.body.motDePasse) {
+      req.body.motDePasse = await bcrypt.hash(req.body.motDePasse, 10);
+    }
 
     await user.update(req.body);
     res.json(user);

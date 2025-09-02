@@ -22,7 +22,6 @@ export const getRendezVousById = async (req, res) => {
       include: [Patient, Dentiste],
     });
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
-    // Sécuriser : ne retourner que si c’est le dentiste connecté
     if (rdv.dentisteId !== req.user.id) return res.status(403).json({ message: "Non autorisé" });
 
     res.json(rdv);
@@ -77,6 +76,25 @@ export const deleteRendezVous = async (req, res) => {
 
     await rdv.destroy();
     res.json({ message: "Rendez-vous supprimé avec succès" });
+  } catch (error) {
+    res.status(500).json({ message: "Erreur serveur", error });
+  }
+};
+
+// 🔎 Récupérer tous les rendez-vous d’un dentiste par ID
+export const getRendezVousByDentiste = async (req, res) => {
+  try {
+    const dentisteId = req.params.dentisteId;
+    const rendezVous = await RendezVous.findAll({
+      where: { dentisteId },
+      include: [Patient, Dentiste],
+    });
+
+    if (rendezVous.length === 0) {
+      return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce dentiste" });
+    }
+
+    res.json(rendezVous);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error });
   }
