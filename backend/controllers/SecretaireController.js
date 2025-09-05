@@ -4,7 +4,7 @@ import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
 // ➕ Créer une secrétaire
 export const createSecretaire = async (req, res) => {
   try {
-    const { nom, email, motDePasse, bureau ,dentisteId  } = req.body;
+    const { nom, email, motDePasse, bureau, dentisteId } = req.body;
 
     // Créer un user avec rôle secretaire
     const newUser = await createUserGeneric({ nom, email, motDePasse, role: "secretaire" });

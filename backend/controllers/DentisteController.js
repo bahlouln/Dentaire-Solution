@@ -1,8 +1,7 @@
-
 import Dentiste from "../models/Dentiste.js";
 import Secretaire from "../models/Secretaire.js";
 import User from "../models/User.js";
-import { createUserGeneric, updateUser, deleteUser, getUserById } from "./UserController.js";
+import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
 
 // ➕ Créer un dentiste
 export const createDentiste = async (req, res) => {
@@ -18,7 +17,7 @@ export const createDentiste = async (req, res) => {
       specialite: specialite || null,
     });
 
-    res.status(201).json({ User: newUser, dentiste: newDentiste });
+    res.status(201).json({ user: newUser, dentiste: newDentiste });
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur lors de la création du dentiste", error: error.message });
   }
@@ -45,14 +44,14 @@ export const getDentisteById = async (req, res) => {
   }
 };
 
-// ✏️ Modifier un dentiste (utilisateur + spécialité)
+// ✏️ Modifier un dentiste
 export const updateDentiste = async (req, res) => {
   try {
     const dentiste = await Dentiste.findByPk(req.params.id);
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     // Update user associé
-    req.params.id = dentiste.userId; // on force updateUser à utiliser l'id du user
+    req.params.id = dentiste.userId;
     await updateUser(req, res);
 
     // Update spécialité
@@ -64,34 +63,32 @@ export const updateDentiste = async (req, res) => {
   }
 };
 
-// ❌ Supprimer un dentiste (supprime aussi le user)
+// ❌ Supprimer un dentiste
 export const deleteDentiste = async (req, res) => {
   try {
     const dentiste = await Dentiste.findByPk(req.params.id);
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     req.params.id = dentiste.userId;
-    await deleteUser(req, res);
-
+    // Appelez deleteUser sans renvoyer de réponse directement
+    await deleteUser(req); // Supprimez "res" si deleteUser gère la réponse
     await dentiste.destroy();
     res.json({ message: "Dentiste supprimé avec succès" });
   } catch (error) {
     res.status(500).json({ message: "Erreur lors de la suppression du dentiste", error });
-  }};
+  }
+};
 
-//avoir toutes les secrétaires d’un dentiste :
+// ➕ Avoir toutes les secrétaires d’un dentiste
 export const getDentisteSecretaires = async (req, res) => {
   try {
     const dentiste = await Dentiste.findByPk(req.params.id, {
       include: [{ model: Secretaire, include: [User] }],
     });
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
-    console.log("Dentiste Secretaires:", dentiste.Secretaires);
+
     res.json(dentiste.Secretaires);
   } catch (error) {
-    console.error("Error fetching secretaries:", error);
     res.status(500).json({ message: "Erreur lors de la récupération des secrétaires", error: error.message });
   }
 };
-
-

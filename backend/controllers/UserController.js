@@ -13,7 +13,7 @@ export const createUserGeneric = async ({ nom, email, motDePasse, role }) => {
   const newUser = await User.create({
     nom,
     email,
-    motDePasse: hashedPassword,
+    motDePasse,
     role: role || "dentiste",
   });
 
