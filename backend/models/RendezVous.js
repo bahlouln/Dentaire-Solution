@@ -10,7 +10,7 @@ const RendezVous = db.define("RendezVous", {
   },
   dateFin: {
     type: DataTypes.DATE,
-    allowNull: false,
+    allowNull: true,
   },
   statut: {
     type: DataTypes.ENUM("planifié", "annulé", "terminé"),

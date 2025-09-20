@@ -4,10 +4,15 @@ import User from "./User.js";
 import Dentiste from "./Dentiste.js";
 
 const Secretaire = db.define("Secretaire", {
-  bureau: {
+ /* bureau: {
     type: DataTypes.STRING,
     allowNull: true, // facultatif
-   },
+   },*/
+    userId: {                 // 👈 ajouter le userId
+    type: DataTypes.INTEGER,
+    allowNull: false,       // obligatoire
+    unique: true,
+  },
   dentisteId: {                // <-- clé étrangère vers Dentiste
     type: DataTypes.INTEGER,
     allowNull: false,

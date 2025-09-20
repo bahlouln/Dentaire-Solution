@@ -2,7 +2,7 @@ import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js"; // 👈 importer middleware
 import authorizeRoles from "../middlewares/roleMiddleware.js";
 import {
-//  getRendezVous,
+  getRendezVous,
   getRendezVousById,
   createRendezVous,
   updateRendezVous,
@@ -14,11 +14,11 @@ import {
 const router = express.Router();
 router.use(authMiddleware); // toutes les routes nécessitent authentification
 router.use(authorizeRoles("secretaire","dentiste"));
-//router.get("/", getRendezVous);
+router.get("/", getRendezVous);
 router.get("/:id", getRendezVousById);
 router.post("/", createRendezVous);
 router.put("/:id", updateRendezVous);
 router.delete("/:id", deleteRendezVous);
 // au lieu de /dentistes/:dentisteId/rendezvous
-router.get("/:dentisteId/rendezvous", getRendezVousByDentiste);
+router.get("/dentiste/:dentisteId", getRendezVousByDentiste);
 export default router;

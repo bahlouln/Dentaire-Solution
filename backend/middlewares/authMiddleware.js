@@ -18,7 +18,7 @@ export default function authMiddleware(req, res, next) {
   try {
     // Vérifier et décoder le token
     const decoded = jwt.verify(token, process.env.SECRET_KEY);
-
+    console.log("JWT décodé :", decoded); // 🔥 Ajoute ça
     // Ajouter les infos du user dans req.user (disponible dans les routes protégées)
     req.user = decoded;
 

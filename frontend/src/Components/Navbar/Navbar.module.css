@@ -1,0 +1,95 @@
+/* Variables alignées */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e293b; /* Sombre cohérent */
+  padding: 1rem 2rem;
+  color: #f1f5f9;
+  border-bottom: 1px solid #475569;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  font-family: 'Inter', sans-serif;
+}
+
+.logo a {
+  color: #f1f5f9;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.logo a:hover {
+  color: #10b981; /* Vert */
+}
+
+.navLinks {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks li a {
+  color: #cbd5e1;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.navLinks li a:hover {
+  color: #10b981; /* Vert au hover */
+}
+
+.icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+}
+
+.bellIcon,
+.logoutIcon {
+  font-size: 1.6rem;
+  color: #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bellIcon:hover {
+  transform: scale(1.1);
+  color: #10b981;
+}
+
+.logoutIcon:hover {
+  transform: scale(1.2);
+  color: #ef4444; /* Rouge pour logout */
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -8px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 18px;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 1rem;
+  }
+  .navLinks {
+    display: none; /* Masquer menu sur mobile, ajoutez un hamburger si besoin */
+  }
+}

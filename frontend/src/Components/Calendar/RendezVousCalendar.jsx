@@ -1,4 +1,3 @@
-// src/components/Calendar/RendezVousCalendar.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import FullCalendar from "@fullcalendar/react";
@@ -7,8 +6,8 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import styles from "./RendezVousCalendar.module.css";
 import { UseRendezVous } from "../../hooks/UseRendezVous";
-import axios from "axios";
-
+import Navbar from "../Navbar/Navbar";
+import SidebarComponent from "../Sidebar/Sidebar";
 function RendezVousCalendar() {
   const { appointment, loading, error } = UseRendezVous();
   const [events, setEvents] = useState([]);
@@ -39,38 +38,43 @@ function RendezVousCalendar() {
 
   // Supprimer un rendez-vous
   const handleEventClick = async (info) => {
-  if (window.confirm(`Supprimer le rendez-vous : ${info.event.title} ?`)) {
-    try {
-      await api.rendezvous.delete(info.event.id); // ✅ utilise l'api centralisée
-      info.event.remove();
-    } catch (err) {
-      alert("Erreur lors de la suppression du rendez-vous");
+    if (window.confirm(`Supprimer le rendez-vous : ${info.event.title} ?`)) {
+      try {
+        await api.rendezvous.delete(info.event.id); // Assurez-vous que 'api' est importé
+        info.event.remove();
+      } catch (err) {
+        alert("Erreur lors de la suppression du rendez-vous");
+      }
     }
-  }
-};
-
+  };
 
   if (loading) return <p>Chargement...</p>;
   if (error) return <p>Erreur : {error}</p>;
 
   return (
-    <div className={styles.calendarContainer}>
-      <h2 className={styles.title}>Gestion des Rendez-vous</h2>
-      <FullCalendar
-        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        editable={true}
-        selectable={true}
-        events={events}
-        dateClick={handleDateClick}
-        eventClick={handleEventClick}
-        height="600px"
-        headerToolbar={{
-          left: "prev,next today",
-          center: "title",
-          right: "dayGridMonth,timeGridWeek,timeGridDay",
-        }}
-      />
+    <div className={styles.appWrapper}>
+      {/* Sidebar fixe à gauche */}
+      <SidebarComponent />
+      {/* Contenu principal avec marge pour sidebar */}
+        {/* Contenu du calendrier */}
+        <div className={styles.calendarContainer}>
+          <FullCalendar
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            editable={true}
+            selectable={true}
+            events={events}
+            dateClick={handleDateClick}
+            eventClick={handleEventClick}
+            height="600px"
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+          />
+       
+      </div>
     </div>
   );
 }

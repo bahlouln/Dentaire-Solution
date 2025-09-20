@@ -24,13 +24,13 @@ http.interceptors.response.use(
 export const api = {
   rendezvous: {
     async getAll() {
-      return await http.get("/appointment"); // ✅ cohérent avec backend
+      return await http.get("/rendezvous");
     },
     async create(newAppointment) {
-      return await http.post("/appointment", newAppointment);
+      return await http.post("/rendezvous", newAppointment);
     },
     async delete(id) {
-      return await http.delete(`/appointment/${id}`); // ✅ corrigé
+      return await http.delete(`/rendezvous/${id}`); // ✅ corrigé
     },
   },
 };

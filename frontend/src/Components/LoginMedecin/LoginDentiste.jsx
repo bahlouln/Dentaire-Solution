@@ -24,14 +24,19 @@ function LoginDentiste() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Requête login
       const res = await axios.post("http://localhost:5000/auth/login", formData);
       console.log("✅ Login success:", res.data);
 
-      // Sauvegarder le token pour les requêtes futures
+      // 🔹 Stocker le token JWT
       localStorage.setItem("token", res.data.token);
 
-      // Rediriger vers la page d’accueil ou dashboard
-      navigate("/Calendar"); // Remplacez par la route souhaitée
+      // 🔹 Stocker l'ID du dentiste connecté
+      // Assure-toi que le backend renvoie l'utilisateur dans res.data.user
+      localStorage.setItem("dentisteId", res.data.user.id);
+
+      // Rediriger vers le dashboard / calendrier
+      navigate("/Calendar");
     } catch (err) {
       console.error("❌ Login error:", err.response?.data || err.message);
       setError(err.response?.data?.message || "Erreur de connexion");
@@ -59,7 +64,7 @@ function LoginDentiste() {
             <FaLock className={styles.icon} />
             <input
               type={showPassword ? "text" : "password"}
-              name="motDePasse"   
+              name="motDePasse"
               value={formData.motDePasse}
               onChange={handleChange}
               required

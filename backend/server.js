@@ -3,10 +3,10 @@ import db from "./config/database.js";
 import dentisteRoutes from "./routes/dentisteRoutes.js";
 import SecretaireRoutes from "./routes/SecretaireRoutes.js";
 import authRoutes from "./routes/AuthRoutes.js";
-import authMiddleware from './middlewares/authMiddleware.js'; 
 import dotenv from 'dotenv';
 import cors from "cors";
 import RendezVousRoutes from "./routes/RendezVousRoutes.js";
+import PatientRoutes from "./routes/PatientRoutes.js"; // 👈 importer le routeur patients
 
 dotenv.config();
 const app = express();
@@ -26,18 +26,22 @@ app.use("/dentistes", dentisteRoutes);
 app.use("/secretaires", SecretaireRoutes);
 app.use("/auth", authRoutes);
 app.use("/rendezvous", RendezVousRoutes);
+app.use("/patients", PatientRoutes);
 
-// Connexion DB
+// Connexion DB et synchronisation
 try {
   await db.authenticate();
   console.log("✅ Connexion à la base réussie !");
 
-  console.log("✅ Modèles recréés avec succès !");
+  // 🔹 Crée toutes les tables définies dans les modèles si elles n'existent pas
+  await db.sync({ alter: true });
+  console.log("✅ Modèles synchronisés avec succès !");
 } catch (error) {
-  console.error("❌ Erreur de connexion à la base :", error);
+  console.error("❌ Erreur de connexion ou synchronisation :", error);
 }
 
 // Test route
 app.get("/", (req,res) => res.send("🚀 API Cabinet Dentaire en marche !"));
 
+// Lancement serveur
 app.listen(5000, () => console.log("🚀 Serveur lancé sur http://localhost:5000"));

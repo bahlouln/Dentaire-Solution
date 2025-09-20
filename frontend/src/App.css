@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+.mainContent {
+  margin-left: 250px; /* Largeur du sidebar */
+  min-height: 100vh;
+  transition: var(--transition);
+}

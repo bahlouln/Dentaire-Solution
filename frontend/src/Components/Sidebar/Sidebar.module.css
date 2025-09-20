@@ -1,0 +1,149 @@
+/* Variables alignées sur le thème global */
+:root {
+  --sidebar-bg-primary: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  --sidebar-text: #f1f5f9;
+  --sidebar-text-secondary: #cbd5e1;
+  --sidebar-hover-bg: #10b981; /* Vert au lieu de bleu */
+  --sidebar-hover-text: #ffffff;
+  --sidebar-active-bg: #059669;
+  --sidebar-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  --border-radius: 12px;
+  --transition: all 0.3s ease;
+  --navbar-height: 64px; /* Hauteur navbar */
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--navbar-height);
+  background: #ffffff; /* ou ta couleur */
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 100; /* plus haut que le sidebar */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Conteneur principal du sidebar */
+.sidebar {
+  background: var(--sidebar-bg-primary);
+  width: 250px;
+  min-height: calc(100vh - var(--navbar-height));
+  color: var(--sidebar-text);
+  box-shadow: var(--sidebar-shadow);
+  border-right: 1px solid #475569;
+  position: fixed;
+  left: 0;
+  top: var(--navbar-height); /* démarre sous le navbar */
+  z-index: 50;
+  overflow-y: auto;
+  font-family: 'Inter', sans-serif;
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Styles pour les liens/items */
+.sidebar a,
+.sidebar .flowbite-sidebar-item {
+  color: var(--sidebar-text-secondary);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  border-radius: var(--border-radius);
+  margin: 4px 12px;
+  transition: var(--transition);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.sidebar a:hover,
+.sidebar .flowbite-sidebar-item:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--sidebar-hover-text);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.sidebar a.active,
+.sidebar .flowbite-sidebar-item[aria-current="page"] {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-hover-text);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.3);
+}
+
+/* Icônes */
+.sidebar svg {
+  width: 22px;
+  height: 22px;
+  margin-right: 16px;
+  flex-shrink: 0;
+  transition: var(--transition);
+  color: var(--sidebar-text-secondary);
+}
+
+.sidebar a:hover svg {
+  color: var(--sidebar-hover-bg);
+  transform: scale(1.1);
+}
+
+/* Badges */
+.sidebar .flowbite-badge {
+  background-color: #ef4444;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  margin-left: auto;
+  transition: var(--transition);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar [label="Pro"] .flowbite-badge {
+  background-color: var(--sidebar-hover-bg); /* Vert pour Pro */
+}
+
+/* Groupe */
+.sidebar .flowbite-sidebar-item-group {
+  padding-top: 12px;
+  border-top: 1px solid #475569;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 200px;
+    top: var(--navbar-height); /* Toujours sous le navbar */
+    min-height: calc(100vh - var(--navbar-height));
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .sidebar::before {
+    content: '';
+    position: fixed;
+    top: var(--navbar-height); /* commence sous la navbar */
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - var(--navbar-height));
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    opacity: 0;
+    transition: var(--transition);
+  }
+  .sidebar.open::before {
+    opacity: 1;
+  }
+}
+
+/* Animation */
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}

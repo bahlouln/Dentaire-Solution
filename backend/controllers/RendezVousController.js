@@ -5,8 +5,11 @@ import Dentiste from "../models/Dentiste.js";
 // 📋 Liste tous les rendez-vous du dentiste connecté
 export const getRendezVous = async (req, res) => {
   try {
+    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
+
     const rendezVous = await RendezVous.findAll({
-      where: { dentisteId: req.user.id },
+      where: { dentisteId: dentiste.id }, // ✅ id de la table Dentiste
       include: [Patient, Dentiste],
     });
     res.json(rendezVous);
@@ -18,12 +21,13 @@ export const getRendezVous = async (req, res) => {
 // 🔍 Récupérer un rendez-vous par ID
 export const getRendezVousById = async (req, res) => {
   try {
-    const rdv = await RendezVous.findByPk(req.params.id, {
-      include: [Patient, Dentiste],
-    });
+    const rdv = await RendezVous.findByPk(req.params.id, { include: [Patient, Dentiste] });
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
-    if (rdv.dentisteId !== req.user.id) return res.status(403).json({ message: "Non autorisé" });
 
+    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
+
+    if (rdv.dentisteId !== dentiste.id) return res.status(403).json({ message: "Non autorisé" });
     res.json(rdv);
   } catch (error) {
     res.status(500).json({ message: "Erreur serveur", error });
@@ -34,14 +38,16 @@ export const getRendezVousById = async (req, res) => {
 export const createRendezVous = async (req, res) => {
   try {
     const { patientId, dateDebut, dateFin, note } = req.body;
-
-    if (!patientId || !dateDebut || !dateFin) {
+    if (!patientId || !dateDebut ) {
       return res.status(400).json({ message: "Champs requis manquants" });
     }
 
+    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
+
     const newRdv = await RendezVous.create({
       patientId,
-      dentisteId: req.user.id,
+      dentisteId: dentiste.id, // ✅ id correct
       dateDebut,
       dateFin,
       note: note || null,
@@ -58,7 +64,11 @@ export const updateRendezVous = async (req, res) => {
   try {
     const rdv = await RendezVous.findByPk(req.params.id);
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
-    if (rdv.dentisteId !== req.user.id) return res.status(403).json({ message: "Non autorisé" });
+
+    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
+
+    if (rdv.dentisteId !== dentiste.id) return res.status(403).json({ message: "Non autorisé" });
 
     await rdv.update(req.body);
     res.json(rdv);
@@ -72,7 +82,11 @@ export const deleteRendezVous = async (req, res) => {
   try {
     const rdv = await RendezVous.findByPk(req.params.id);
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
-    if (rdv.dentisteId !== req.user.id) return res.status(403).json({ message: "Non autorisé" });
+
+    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
+
+    if (rdv.dentisteId !== dentiste.id) return res.status(403).json({ message: "Non autorisé" });
 
     await rdv.destroy();
     res.json({ message: "Rendez-vous supprimé avec succès" });

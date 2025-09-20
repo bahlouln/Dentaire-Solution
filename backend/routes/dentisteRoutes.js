@@ -20,7 +20,7 @@ router.use(authorizeRoles("admin")); // ← Seul l'admin peut continuer
 router.post("/", createDentiste);        // ➕ Ajouter dentiste
 router.get("/", getDentistes);          // 📋 Liste dentistes
 router.get("/:id", getDentisteById);    // 🔍 Un dentiste
-router.put("/:id", updateDentiste);     // ✏️ Modifier
+router.put("/:id", authorizeRoles("dentiste"),updateDentiste);     // ✏️ Modifier
 router.delete("/:id", deleteDentiste);  // ❌ Supprimer
 router.get("/:id/secretaires", getDentisteSecretaires); 
 

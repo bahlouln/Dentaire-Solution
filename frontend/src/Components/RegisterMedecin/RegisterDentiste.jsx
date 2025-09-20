@@ -22,7 +22,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const response = await axios.post("http://localhost:5000/auth/register", {
+    const response = await axios.post("http://localhost:5000/dentistes", {
       nom: formData.nom,
       email: formData.email,
       motDePasse: formData.password, 

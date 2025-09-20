@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import db from "../config/database.js";
+import Dentiste from "./Dentiste.js";
 
 const Patient = db.define("Patient", {
   nom: {
@@ -28,5 +29,7 @@ const Patient = db.define("Patient", {
     allowNull: true,
   },
 });
+Dentiste.hasMany(Patient, { foreignKey: "dentisteId", onDelete: "CASCADE" });
+Patient.belongsTo(Dentiste, { foreignKey: "dentisteId" });
 
 export default Patient;
