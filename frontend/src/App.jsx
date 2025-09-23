@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import RendezVousCalendar from "./Components/Calendar/RendezVousCalendar";
-import LoginDentiste from "./Components/LoginMedecin/LoginDentiste";
-import RegisterDentiste from "./Components/RegisterMedecin/RegisterDentiste";
-import AddAppointmentForm from "./Components/formulaires/AddAppointment";
+import LoginDentiste from "./Components/auth/LoginDentiste.jsx";
+import RegisterDentiste from "./Components/auth/RegisterDentiste.jsx";
+import AddAppointmentForm from "./Components/forms/AddAppointment.jsx";
 import SidebarComponent from "./Components/Sidebar/Sidebar";
-import ListeSecretaires from "./Components/ListeSecretaires/ListeSecretaires";
-import Navbar from "./Components/Navbar/Navbar"; // si t7eb taffichi navbar
+import ListeSecretaires from "./Components/lists/ListeSecretaires.jsx";
+import Navbar from "./layouts/Navbar.jsx"; // si t7eb taffichi navbar
 import { Outlet, useLocation } from "react-router-dom";
-import AjouterSecretaire from "./Components/ajoutersecretaire/ajoutersecretaire";
-import ListePatients from "./Components/ListePatients/ListePatients";
-import AjouterPatient from "./Components/ajouterpatient/AjouterPatient";
+import AjouterSecretaire from "./Components/forms/AjouterSecretaire.jsx";
+import ListePatients from "./Components/lists/ListePatients.jsx";
+import AjouterPatient from "./Components/forms/AjouterPatient.jsx";
 
 function Layout() {
   const location = useLocation();
