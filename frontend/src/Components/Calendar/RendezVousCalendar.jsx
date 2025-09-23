@@ -6,7 +6,7 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { UseRendezVous } from "../../hooks/UseRendezVous";
 import Navbar from "../../layouts/Navbar.jsx";
-import SidebarComponent from "../Sidebar/Sidebar";
+import SidebarComponent from "../../layouts/Sidebar.jsx";
 import axios from "axios";
 
 export default function RendezVousCalendar() {
