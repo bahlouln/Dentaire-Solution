@@ -178,3 +178,22 @@ export const deletePatient = async (req, res) => {
     });
   }
 };
+export const getPatientsAnnualStats = async (req, res) => {
+  try {
+    const data = await Patient.findAll({
+      attributes: [
+        // extraire l'année de la date de création
+        [Patient.sequelize.fn("YEAR", Patient.sequelize.col("createdAt")), "annee"],
+        // compter le nombre de patients
+        [Patient.sequelize.fn("COUNT", Patient.sequelize.col("id")), "total"],
+      ],
+      group: ["annee"],
+      order: [["annee", "ASC"]],
+    });
+
+    res.json(data);
+  } catch (error) {
+    console.error("Erreur getPatientsAnnual :", error);
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};

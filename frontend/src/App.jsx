@@ -3,13 +3,14 @@ import RendezVousCalendar from "./Components/Calendar/RendezVousCalendar";
 import LoginDentiste from "./Components/auth/LoginDentiste.jsx";
 import RegisterDentiste from "./Components/auth/RegisterDentiste.jsx";
 import AddAppointmentForm from "./Components/forms/AddAppointment.jsx";
-import SidebarComponent from "./Components/Sidebar/Sidebar";
+import SidebarComponent from "./layouts/Sidebar.jsx";
 import ListeSecretaires from "./Components/lists/ListeSecretaires.jsx";
 import Navbar from "./layouts/Navbar.jsx"; // si t7eb taffichi navbar
 import { Outlet, useLocation } from "react-router-dom";
 import AjouterSecretaire from "./Components/forms/AjouterSecretaire.jsx";
 import ListePatients from "./Components/lists/ListePatients.jsx";
 import AjouterPatient from "./Components/forms/AjouterPatient.jsx";
+import Dashboard from "./Components/Dashboard/Dashboard.jsx";
 
 function Layout() {
   const location = useLocation();
@@ -53,11 +54,7 @@ export default function App() {
         <Route path="/add-secretary" element={<AjouterSecretaire />} />
         <Route path="/ListePatients" element={<ListePatients />} />
         <Route path="/add-patient" element={<AjouterPatient />} />
-
-        /add-patient
-
-        
-
+        <Route path="/dashboard" element={<Dashboard />} />
       </Route>
     </Routes>
   );

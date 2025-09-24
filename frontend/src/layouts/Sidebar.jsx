@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
     HiChartPie,
@@ -16,8 +16,8 @@ export default function SidebarComponent() {
     const [openMobile, setOpenMobile] = useState(false);
 
     const items = [
-        { to: "/calendar", label: "Dashboard", icon: HiChartPie },
-        { to: "/rendezvous", label: "Rendez-vous", icon: HiInbox },
+        { to: "/Dashboard", label: "Dashboard", icon: HiChartPie },
+        { to: "/calendar", label: "calendrier", icon: HiInbox },
         { to: "/ListeSecretaires", label: "Secrétaires", icon: HiUser },
         { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
     ];

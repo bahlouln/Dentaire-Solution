@@ -27,7 +27,7 @@ export default function RendezVousCalendar() {
                     title: patientNom,
                     extendedProps: { dentisteNom, patientNom },
                     start: a.dateDebut,
-                    end: a.dateFin,
+                    end: a.dateDebut,
                 };
             });
             setEvents(mapped);
@@ -127,12 +127,12 @@ export default function RendezVousCalendar() {
 
     return (
         <div className="flex min-h-screen bg-slate-50">
-            {/* Sidebar fixe */}
-            <SidebarComponent />
+        
+     
 
             {/* Contenu principal */}
             <main className="flex-1 p-4 sm:p-6 lg:p-8">
-                <Navbar />
+              
 
                 {/* Carte calendrier */}
                 <section className="mt-4 rounded-2xl border border-slate-200 bg-white/80 shadow-sm backdrop-blur">

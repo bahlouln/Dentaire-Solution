@@ -1,6 +1,7 @@
 import express from "express";
 import authMiddleware from "../middlewares/authMiddleware.js"; // 👈 importer middleware
 import authorizeRoles from "../middlewares/roleMiddleware.js";
+
 import {
   getRendezVous,
   getRendezVousById,
@@ -8,6 +9,10 @@ import {
   updateRendezVous,
   deleteRendezVous,
   getRendezVousByDentiste,
+  getRendezVousHistogramme,
+  getRendezVousCourbe,
+  getQuickStats,
+  getRendezVousAnnual,
 } from "../controllers/RendezVousController.js";
 
 //seuls les utilisateurs connectés puissent gérer les rendez-vous.
@@ -21,4 +26,9 @@ router.put("/:id", updateRendezVous);
 router.delete("/:id", deleteRendezVous);
 // au lieu de /dentistes/:dentisteId/rendezvous
 router.get("/dentiste/:dentisteId", getRendezVousByDentiste);
+router.get("/stats/histogramme", getRendezVousHistogramme);
+router.get("/stats/courbe", getRendezVousCourbe);
+router.get("/stats/quick", getQuickStats);
+router.get("/stats/annual", getRendezVousAnnual);
+
 export default router;
