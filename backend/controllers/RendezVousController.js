@@ -180,27 +180,38 @@ export const getRendezVousCourbe = async (req, res) => {
 
     const today = new Date();
     const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
 
     const rdvToday = await RendezVous.count({
       where: { 
         dentisteId: dentiste.id, 
-        dateDebut: { [Op.gte]: startOfToday } 
+        dateDebut: { 
+          [Op.gte]: startOfToday,
+          [Op.lte]: endOfToday
+        }
       }
     });
 
     const rdvThisMonth = await RendezVous.count({
       where: { 
         dentisteId: dentiste.id, 
-        dateDebut: { [Op.gte]: startOfMonth } 
+        dateDebut: { 
+          [Op.gte]: startOfMonth,
+          [Op.lte]: endOfMonth
+        }
       }
     });
 
     res.json({ today: rdvToday, thisMonth: rdvThisMonth });
   } catch (error) {
-    console.error(error); // <-- Ajoute ça pour voir l'erreur exacte dans la console
+    console.error(error);
     res.status(500).json({ message: "Erreur serveur", error });
-  }};
+  }
+};
+
   // 📈 Courbe : évolution annuelle des RDV
 export const getRendezVousAnnual = async (req, res) => {
   try {

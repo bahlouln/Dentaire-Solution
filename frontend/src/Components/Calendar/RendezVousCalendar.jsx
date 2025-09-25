@@ -17,23 +17,22 @@ export default function RendezVousCalendar() {
     const [msg, setMsg] = useState("");
 
     // — Mapping des rendez‑vous vers FullCalendar — //
-    useEffect(() => {
-        if (Array.isArray(appointment)) {
-            const mapped = appointment.map((a) => {
-                const patientNom = a?.Patient ? `${a.Patient.nom} ${a.Patient.prenom}` : "Inconnu";
-                const dentisteNom = a?.Dentiste ? `${a.Dentiste.nom} ${a.Dentiste.prenom}` : "Inconnu";
-                return {
-                    id: String(a.id ?? a._id ?? ""),
-                    title: patientNom,
-                    extendedProps: { dentisteNom, patientNom },
-                    start: a.dateDebut,
-                    end: a.dateDebut,
-                };
-            });
-            setEvents(mapped);
-        }
-    }, [appointment]);
-
+     useEffect(() => {
+    if (Array.isArray(appointment)) {
+      const mapped = appointment.map(a => {
+        const patientNom = a?.Patient ? `${a.Patient.nom} ${a.Patient.prenom}` : "Inconnu";
+        const note = a?.note || "Aucune note";
+        return {
+          id: String(a.id ?? a._id ?? ""),
+          title: patientNom,
+          extendedProps: { note, patientNom },
+          start: a.dateDebut,
+          end: a.dateDebut,
+        };
+      });
+      setEvents(mapped);
+    }
+  }, [appointment]);
     // — Actions — //
     const handleDateClick = (info) => {
         navigate(`/add-appointment/${info.dateStr}`);
@@ -47,46 +46,53 @@ export default function RendezVousCalendar() {
         }
 
         const id = info.event.id;
-        const titre = info.event.extendedProps?.patientNom || info.event.title || "Inconnu";
+         const titre = info.event.extendedProps?.patientNom || info.event.extendedProps?.note || info.event.title || "Inconnu";
 
-        // Confirmation avec un message clair
-        if (!window.confirm(`Voulez-vous vraiment supprimer le rendez-vous de ${titre} ?`)) {
-            return;
-        }
+// Confirmation avec un message clair
+if (!window.confirm(`Voulez-vous vraiment supprimer le rendez-vous de ${titre} ?`)) {
+    return;
+}
 
-        setBusy(true);
-        setMsg("");
+setBusy(true);
+setMsg("");
 
-        try {
-            // Utilisation d'une URL configurable
-            const API_URL =  "http://localhost:5000";
-            await axios.delete(`${API_URL}/rendezvous/${id}`);
-            info.event.remove();
-            setMsg("Rendez-vous supprimé avec succès.");
-        } catch (error) {
-            // Message d'erreur détaillé
-            const errorMsg = error.response?.data?.message || "Une erreur est survenue lors de la suppression.";
-            setMsg(errorMsg);
-            console.error("Erreur lors de la suppression du rendez-vous:", error);
-        } finally {
-            setBusy(false);
-        }
-    };
+try {
+    // Utilisation d'une URL configurable
+    const API_URL = "http://localhost:5000";
+    const token = localStorage.getItem("token");
+    if (!token) {
+        setMsg("❌ Vous devez vous reconnecter.");
+        setBusy(false);
+        return;
+    }
+
+    await axios.delete(`${API_URL}/rendezvous/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    info.event.remove();
+    setMsg("Rendez-vous supprimé avec succès ✅");
+} catch (error) {
+    // Message d'erreur détaillé
+    const errorMsg = error.response?.data?.message || "Une erreur est survenue lors de la suppression.";
+    setMsg(errorMsg);
+    console.error("Erreur lors de la suppression du rendez-vous:", error);
+} finally {
+    setBusy(false);
+}};
     // — Rendu custom des événements (patient en titre + badge dentiste) — //
     const renderEventContent = (arg) => {
-        const dentiste = arg?.event?.extendedProps?.dentisteNom;
-        return (
-            <div className="flex flex-col gap-0.5">
-                <span className="truncate font-medium">{arg.event.title}</span>
-                {dentiste ? (
-                    <span className="inline-flex w-fit items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-1.5 text-[10px] leading-5 text-slate-700">
-            Dentiste: {dentiste}
+    const note = arg.event.extendedProps?.note;
+    return (
+      <div className="flex flex-col gap-0.5">
+        <span className="truncate font-medium">{arg.event.title}</span>
+        {note && (
+          <span className="inline-flex w-fit items-center gap-1 rounded-md border border-slate-200 bg-slate-50 px-1.5 text-[10px] leading-5 text-slate-700">
+            Note: {note}
           </span>
-                ) : null}
-            </div>
-        );
-    };
-
+        )}
+      </div>
+    );
+  }; 
     // — États — //
     if (loading) {
         return (
@@ -126,6 +132,7 @@ export default function RendezVousCalendar() {
     const isEmpty = !events || events.length === 0;
 
     return (
+        
         <div className="flex min-h-screen bg-slate-50">
         
      

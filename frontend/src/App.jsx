@@ -11,6 +11,7 @@ import AjouterSecretaire from "./Components/forms/AjouterSecretaire.jsx";
 import ListePatients from "./Components/lists/ListePatients.jsx";
 import AjouterPatient from "./Components/forms/AjouterPatient.jsx";
 import Dashboard from "./Components/Dashboard/Dashboard.jsx";
+import AddAppointment from "./Components/forms/AddAppointment.jsx";
 
 function Layout() {
   const location = useLocation();
@@ -48,7 +49,8 @@ export default function App() {
       <Route element={<Layout />}>
         <Route path="/register-dentiste" element={<RegisterDentiste />} />
         <Route path="/calendar" element={<RendezVousCalendar />} />
-        <Route path="/add-appointment/:date?" element={<AddAppointmentForm />} />
+        <Route path="/add-appointment" element={<AddAppointment />} />
+        <Route path="/add-appointment/:dateStr" element={<AddAppointment />} />
         <Route path="/" element={<RendezVousCalendar />} />
         <Route path="/ListeSecretaires" element={<ListeSecretaires />} />
         <Route path="/add-secretary" element={<AjouterSecretaire />} />

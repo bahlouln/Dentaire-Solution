@@ -16,10 +16,11 @@ export default function SidebarComponent() {
     const [openMobile, setOpenMobile] = useState(false);
 
     const items = [
-        { to: "/Dashboard", label: "Dashboard", icon: HiChartPie },
         { to: "/calendar", label: "calendrier", icon: HiInbox },
+               { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
         { to: "/ListeSecretaires", label: "Secrétaires", icon: HiUser },
-        { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
+        { to: "/Dashboard", label: "Dashboard", icon: HiChartPie },
+
     ];
 
     const navItemClass = (isActive) =>
