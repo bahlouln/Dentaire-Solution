@@ -19,7 +19,7 @@ export const createSecretaire = async (req, res) => {
     // 3️⃣ Créer la secrétaire liée au dentiste connecté
     const newSecretaire = await Secretaire.create({
       userId: newUser.id,
-      dentisteId: req.user.dentiste.id, 
+      dentisteId: req.dentiste.id,
     });
 
     res
