@@ -1,13 +1,11 @@
 import express from "express";
 import {
-  createPatientByDentiste,
+  
   createPatient,
   getPatients,
   getPatientById,
   updatePatient,
   deletePatient,
-  getPatientsByDentiste,
-  getPatientsByDentisteConnecte,
   getPatientsAnnualStats, // <-- ajouter le contrôleur
   getPatientsBySecretaireConnecte
 } from "../controllers/patientController.js";
@@ -15,11 +13,10 @@ import {
 const router = express.Router();
 
 // ---- Routes spécifiques AVANT /:id ---- //
-router.get("/me", getPatientsByDentisteConnecte); 
 router.get("/secretaire/patients", getPatientsBySecretaireConnecte);
 router.get("/stats/annual", getPatientsAnnualStats);
-router.post("/dentistes/:dentisteId/patients", createPatientByDentiste);
-router.get("/dentistes/:dentisteId/patients", getPatientsByDentiste);
+router.post("/dentistes/:dentisteId/patients", createPatient);
+router.get("/dentistes/:dentisteId/patients", getPatients );
 
 // ---- Routes génériques ---- //
 router.post("/", createPatient); 

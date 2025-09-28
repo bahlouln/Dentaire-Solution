@@ -6,12 +6,10 @@ import User from "../models/User.js";
 // ➕ Créer un patient pour le dentiste connecté
 export const createPatient = async (req, res) => {
   try {
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
-    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
-
+    
     const patient = await Patient.create({
       ...req.body,
-      dentisteId: dentiste.id,
+      dentisteId: req.user.dentisteId, 
     });
 
     res.status(201).json({
@@ -27,46 +25,14 @@ export const createPatient = async (req, res) => {
   }
 };
 
-// ➕ Créer un patient lié à un dentiste spécifique
-export const createPatientByDentiste = async (req, res) => {
-  try {
-    const { dentisteId } = req.params;
-    const dentiste = await Dentiste.findByPk(dentisteId);
-    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
-
-    const patient = await Patient.create({
-      ...req.body,
-      dentisteId,
-    });
-
-    res.status(201).json({
-      message: "Patient créé pour ce dentiste avec succès",
-      patient,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de la création du patient pour ce dentiste",
-      error: error.message,
-    });
-  }
-};
-
 // 📋 Récupérer les patients du dentiste connecté
-export const getPatientsByDentisteConnecte = async (req, res) => {
+export const getPatients = async (req, res) => {
   try {
-    // Récupérer le dentiste connecté via req.user.id
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
-
-    if (!dentiste) {
-      return res.status(404).json({ message: "Dentiste non trouvé" });
-    }
+    
 
     // Récupérer tous les patients liés à ce dentiste
     const patients = await Patient.findAll({
-      where: { dentisteId: dentiste.id },
-      // tu peux inclure d'autres modèles si nécessaire, par ex. rendez-vous
-      // include: [{ model: RendezVous }] 
+      where: { dentisteId: req.User.dentisteId },
     });
 
     if (!patients || patients.length === 0) {
@@ -126,48 +92,7 @@ export const getPatientsBySecretaireConnecte = async (req, res) => {
   }
 };
 
-// 📋 Récupérer tous les patients
-export const getPatients = async (req, res) => {
-  try {
-    const patients = await Patient.findAll({
-      include: [{ model: Dentiste }], // ne pas préciser d'attributs inexistants
-    });
 
-    res.json({
-      message: "Liste des patients récupérée",
-      patients,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de la récupération des patients",
-      error: error.message,
-    });
-  }
-};
-
-// 📋 Récupérer tous les patients d’un dentiste
-export const getPatientsByDentiste = async (req, res) => {
-  try {
-    const { dentisteId } = req.params;
-    const dentiste = await Dentiste.findByPk(dentisteId, {
-      include: [{ model: Patient }],
-    });
-
-    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
-
-    res.json({
-      message: "Patients du dentiste récupérés",
-      patients: dentiste.Patients || [],
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      message: "Erreur lors de la récupération des patients du dentiste",
-      error: error.message,
-    });
-  }
-};
 
 // 🔍 Récupérer un patient par ID
 export const getPatientById = async (req, res) => {

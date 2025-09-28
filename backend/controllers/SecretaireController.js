@@ -1,18 +1,12 @@
 import Secretaire from "../models/Secretaire.js";
-import Dentiste from "../models/Dentiste.js";
 import User from "../models/User.js";
 import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
 
 // ➕ Créer une secrétaire
 export const createSecretaire = async (req, res) => {
   try {
-    const { nom, email, motDePasse, bureau } = req.body;
+    const { nom, email, motDePasse } = req.body;
 
-    // 1️⃣ Trouver le dentiste connecté via son userId
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
-    if (!dentiste) {
-      return res.status(404).json({ message: "Dentiste non trouvé" });
-    }
 
     // 2️⃣ Créer un user avec rôle secretaire
     const newUser = await createUserGeneric({
@@ -25,7 +19,7 @@ export const createSecretaire = async (req, res) => {
     // 3️⃣ Créer la secrétaire liée au dentiste connecté
     const newSecretaire = await Secretaire.create({
       userId: newUser.id,
-      dentisteId: dentiste.id, // 🔑 auto rempli
+      dentisteId: req.user.dentiste.id, 
     });
 
     res
@@ -38,16 +32,6 @@ export const createSecretaire = async (req, res) => {
         message: "Erreur serveur lors de la création de la secrétaire",
         error: error.message,
       });
-  }
-};
-
-// 📋 Récupérer toutes les secrétaires
-export const getSecretaires = async (req, res) => {
-  try {
-    const secretaires = await Secretaire.findAll({ include: User });
-    res.json(secretaires);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
   }
 };
 
@@ -98,16 +82,12 @@ export const deleteSecretaire = async (req, res) => {
 };
 
 // 📋 Récupérer les secrétaires du dentiste connecté
-export const getSecretairesByDentiste = async (req, res) => {
+export const getSecretaires = async (req, res) => {
   try {
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
 
-    if (!dentiste) {
-      return res.status(404).json({ message: "Dentiste non trouvé" });
-    }
 
     const secretaires = await Secretaire.findAll({
-      where: { dentisteId: dentiste.id },
+      where: { dentisteId: req.user.dentisteId },
       include: [{ model: User, attributes: ["id", "nom", "email", "role"] }],
     });
 
