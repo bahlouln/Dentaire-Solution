@@ -23,12 +23,12 @@ app.use(cors({
 app.use(express.json());
 
 // Routes
-app.use("/dentistes", dentisteRoutes);
-app.use("/secretaires", SecretaireRoutes);
-app.use("/auth", authRoutes);
-app.use("/patients", PatientRoutes);
-app.use("/admin", AdminRoutes);
-app.use("/agenda", AgendaRoutes);
+app.use("/api/dentistes", dentisteRoutes);
+app.use("/api/secretaires", SecretaireRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/patients", PatientRoutes);
+app.use("/api/admin", AdminRoutes);
+app.use("/api/agenda", AgendaRoutes);
 
 // Connexion DB et synchronisation
 try {

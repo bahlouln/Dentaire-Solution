@@ -173,7 +173,6 @@ export const AuthProvider = ({ children }) => {
         isAdmin: user?.role === 'admin',
         isDentiste: user?.role === 'dentiste',
         isSecretaire: user?.role === 'secretaire',
-
         checkTokenValidity,
         refreshToken
     };
