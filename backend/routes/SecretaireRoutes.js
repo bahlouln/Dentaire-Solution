@@ -3,6 +3,7 @@ import { createPatient, deletePatient, getPatients, updatePatient } from "../con
 import { createRendezVous, deleteRendezVous, getRendezVous, updateRendezVous } from "../controllers/RendezVousController.js";
 import { authenticateToken } from "./AuthRoutes.js";
 import Dentiste from '../models/Dentiste.js';
+import Secretaire from "../models/Secretaire.js";
 
 const router = express.Router();
 
@@ -17,14 +18,31 @@ const requireSecretaire = (req, res, next) => {
 
 
 
-export const attachDentisteFromSec = async (req, res, next) => {
+export const attachSecretaireAndDentiste = async (req, res, next) => {
     try {
-        if (req.user?.role !== 'secretaire') {
-            return res.status(403).json({ error: 'Accès secretaire requis' });
+
+        const secretaire = await Secretaire.findOne({
+            where: { userId: req.user.userId },
+        });
+        if (!secretaire) {
+            return res.status(404).json({ error: "Profil secrétaire introuvable" });
         }
-        const dentiste = await Dentiste.findOne({ where: { userId: req.user.secretaire.dentisteId } });
-        if (!dentiste) return res.status(404).json({ error: 'Profil dentiste introuvable' });
+
+        const dentisteId = secretaire.dentisteId ?? secretaire.DentisteId;
+        if (!dentisteId) {
+            return res.status(400).json({ error: "Secrétaire sans dentiste lié" });
+        }
+
+        // si pas d'include plus haut :
+        const dentiste = await Dentiste.findByPk(dentisteId);
+        if (!dentiste) {
+            return res.status(404).json({ error: "Profil dentiste introuvable" });
+        }
+
+        // exposer sur req
+        req.secretaire = secretaire;
         req.dentiste = dentiste;
+
         next();
     } catch (e) {
         next(e);
@@ -32,10 +50,9 @@ export const attachDentisteFromSec = async (req, res, next) => {
 };
 
 
-
 router.use(authenticateToken);
 router.use(requireSecretaire);
-router.use(attachDentisteFromSec);
+router.use(attachSecretaireAndDentiste);
 router.post("/patients", createPatient);
 router.get("/patients", getPatients);
 router.put("/patients/:id", updatePatient);
