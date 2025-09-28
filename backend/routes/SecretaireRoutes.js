@@ -1,6 +1,5 @@
 import express from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
-import authorizeRoles from "../middlewares/roleMiddleware.js";
+
 import {
   createSecretaire,
   getSecretaires,
@@ -13,27 +12,25 @@ import {
 const router = express.Router();
 
 // ➕ Ajouter secrétaire (dentiste seulement)
-router.post("/", authMiddleware, authorizeRoles("dentiste"), createSecretaire);
+router.post("/", createSecretaire);
 
 // 📋 Liste des secrétaires du dentiste connecté
 router.get(
   "/dentiste",
-  authMiddleware,
-  authorizeRoles("dentiste", "admin"),
   getSecretairesByDentiste
 );
 
 // 📋 Liste secrétaires (admin seulement)
-router.get("/", authMiddleware, authorizeRoles("admin"), getSecretaires);
+router.get("/",  getSecretaires);
 
 // 🔍 Une secrétaire par ID (admin seulement)
-router.get("/:id", authMiddleware, authorizeRoles("admin"), getSecretaireById);
+router.get("/:id",  getSecretaireById);
 
 // ✏️ Modifier une secrétaire (dentiste seulement)
-router.put("/:id", authMiddleware, authorizeRoles("dentiste"), updateSecretaire);
+router.put("/:id",  updateSecretaire);
 
 // ❌ Supprimer une secrétaire (dentiste seulement)
-router.delete("/:id", authMiddleware, authorizeRoles("dentiste"), deleteSecretaire);
+router.delete("/:id", deleteSecretaire);
 
 export default router;
 

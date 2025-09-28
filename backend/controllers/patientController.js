@@ -1,5 +1,7 @@
 import Patient from "../models/Patient.js";
 import Dentiste from "../models/Dentiste.js";
+import Secretaire from "../models/Secretaire.js";
+import User from "../models/User.js";
 
 // ➕ Créer un patient pour le dentiste connecté
 export const createPatient = async (req, res) => {
@@ -74,6 +76,52 @@ export const getPatientsByDentisteConnecte = async (req, res) => {
     res.status(200).json({ message: "Patients récupérés avec succès", patients });
   } catch (error) {
     console.error("Erreur getPatientsByDentisteConnecte :", error);
+    res.status(500).json({ message: "Erreur serveur", error: error.message });
+  }
+};
+
+
+// 📋 Récupérer les patients via une secrétaire connectée
+
+export const getPatientsBySecretaireConnecte = async (req, res) => {
+  try {
+    // 1️⃣ Trouver la secrétaire connectée
+    const secretaire = await Secretaire.findOne({
+      where: { userId: req.user.id },
+      include: [
+        {
+          model: Dentiste,
+          include: [{ model: User, attributes: ["id", "nom", "email"] }],
+        },
+      ],
+    });
+
+    if (!secretaire) {
+      return res.status(404).json({ message: "Secrétaire non trouvée" });
+    }
+
+    // 2️⃣ Récupérer les patients du dentiste associé
+    const patients = await Patient.findAll({
+      where: { dentisteId: secretaire.dentisteId },
+      include: [
+        {
+          model: Dentiste,
+          attributes: ["id", "specialite"],
+          include: [{ model: User, attributes: ["id", "nom", "email"] }],
+        },
+      ],
+    });
+
+    if (!patients.length) {
+      return res.status(200).json({ message: "Aucun patient trouvé pour ce dentiste", patients: [] });
+    }
+
+    res.status(200).json({
+      message: "✅ Patients récupérés avec succès",
+      patients,
+    });
+  } catch (error) {
+    console.error("Erreur getPatientsBySecretaireConnecte :", error);
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 };

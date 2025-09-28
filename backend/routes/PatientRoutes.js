@@ -1,6 +1,4 @@
 import express from "express";
-import authMiddleware from "../middlewares/authMiddleware.js";
-import authorizeRoles from "../middlewares/roleMiddleware.js";
 import {
   createPatientByDentiste,
   createPatient,
@@ -10,26 +8,23 @@ import {
   deletePatient,
   getPatientsByDentiste,
   getPatientsByDentisteConnecte,
-  getPatientsAnnualStats // <-- ajouter le contrôleur
+  getPatientsAnnualStats, // <-- ajouter le contrôleur
+  getPatientsBySecretaireConnecte
 } from "../controllers/patientController.js";
 
 const router = express.Router();
-router.use(authMiddleware); // toutes les routes nécessitent authentification
-router.use(authorizeRoles("secretaire","dentiste"));
 
-// Routes CRUD
-router.post("/", createPatient);      // ➕ Ajouter patient
-router.get("/", getPatients);    
-router.get("/me", getPatientsByDentisteConnecte ); // 📋 Liste patients dentiste connecté
-router.get("/:id", getPatientById);   // 🔍 Un patient
-router.put("/:id", updatePatient);    // ✏️ Modifier
-router.delete("/:id", deletePatient); // ❌ Supprimer
+// ---- Routes spécifiques AVANT /:id ---- //
+router.get("/me", getPatientsByDentisteConnecte); 
+router.get("/secretaire/patients", getPatientsBySecretaireConnecte);
+router.get("/stats/annual", getPatientsAnnualStats);
+router.post("/dentistes/:dentisteId/patients", createPatientByDentiste);
+router.get("/dentistes/:dentisteId/patients", getPatientsByDentiste);
 
-// Patients par dentiste
-router.post("/dentistes/:dentisteId/patients", createPatientByDentiste); // ➕ Ajouter patient à un dentiste
-router.get("/dentistes/:dentisteId/patients", getPatientsByDentiste);    // 📋 Liste patients d’un dentiste
-
-// 📊 Statistiques annuelles des patients
-router.get("/stats/annual", getPatientsAnnualStats); // <-- nouvelle route
-
+// ---- Routes génériques ---- //
+router.post("/", createPatient); 
+router.get("/", getPatients);
+router.get("/:id", getPatientById); 
+router.put("/:id", updatePatient);
+router.delete("/:id", deletePatient);
 export default router;
