@@ -5,9 +5,9 @@ import SecretaireRoutes from "./routes/SecretaireRoutes.js";
 import authRoutes from "./routes/AuthRoutes.js";
 import dotenv from 'dotenv';
 import cors from "cors";
-//import RendezVousRoutes from "./routes/RendezVousRoutes.js";
 import PatientRoutes from "./routes/PatientRoutes.js"; // 👈 importer le routeur patients
 import AdminRoutes from "./routes/admin.js";
+import AgendaRoutes    from "./routes/agenda.js";
 
 dotenv.config();
 const app = express();
@@ -26,9 +26,9 @@ app.use(express.json());
 app.use("/dentistes", dentisteRoutes);
 app.use("/secretaires", SecretaireRoutes);
 app.use("/auth", authRoutes);
-//app.use("/rendezvous", RendezVousRoutes);
 app.use("/patients", PatientRoutes);
 app.use("/admin", AdminRoutes);
+app.use("/agenda", AgendaRoutes);
 
 // Connexion DB et synchronisation
 try {
