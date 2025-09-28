@@ -6,11 +6,9 @@ import { Op } from "sequelize";
 // 📋 Liste tous les rendez-vous du dentiste connecté
 export const getRendezVous = async (req, res) => {
   try {
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
-    if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     const rendezVous = await RendezVous.findAll({
-      where: { dentisteId: dentiste.id },
+      where: { dentisteId: req.dentiste.id },
       include: [Patient, Dentiste],
     });
     res.json(rendezVous);
@@ -43,7 +41,7 @@ export const createRendezVous = async (req, res) => {
       return res.status(400).json({ message: "Champs requis manquants" });
     }
 
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    const dentiste = await Dentiste.findOne({ where: { userId: req.dentiste.id } });
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     const newRdv = await RendezVous.create({
@@ -56,17 +54,20 @@ export const createRendezVous = async (req, res) => {
 
     res.status(201).json(newRdv);
   } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
-  }
+  console.error("Erreur création RDV:", error); // 🔥 log complet côté serveur
+  res.status(500).json({ 
+    message: "Erreur serveur", 
+    error: error.message || error 
+  });
 };
-
+};
 // ✏️ Mettre à jour un rendez-vous
 export const updateRendezVous = async (req, res) => {
   try {
     const rdv = await RendezVous.findByPk(req.params.id);
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
 
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    const dentiste = await Dentiste.findOne({ where: { userId: req.dentiste.id } });
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     if (rdv.dentisteId !== dentiste.id) return res.status(403).json({ message: "Non autorisé" });
@@ -84,7 +85,7 @@ export const deleteRendezVous = async (req, res) => {
     const rdv = await RendezVous.findByPk(req.params.id);
     if (!rdv) return res.status(404).json({ message: "Rendez-vous non trouvé" });
 
-    const dentiste = await Dentiste.findOne({ where: { userId: req.user.id } });
+    const dentiste = await Dentiste.findOne({ where: { userId: req.dentiste.id } });
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
     if (rdv.dentisteId !== dentiste.id) return res.status(403).json({ message: "Non autorisé" });
@@ -96,24 +97,7 @@ export const deleteRendezVous = async (req, res) => {
   }
 };
 
-// 🔎 Récupérer tous les rendez-vous d’un dentiste par ID
-export const getRendezVousByDentiste = async (req, res) => {
-  try {
-    const dentisteId = req.params.dentisteId;
-    const rendezVous = await RendezVous.findAll({
-      where: { dentisteId },
-      include: [Patient, Dentiste],
-    });
 
-    if (rendezVous.length === 0) {
-      return res.status(404).json({ message: "Aucun rendez-vous trouvé pour ce dentiste" });
-    }
-
-    res.json(rendezVous);
-  } catch (error) {
-    res.status(500).json({ message: "Erreur serveur", error });
-  }
-};
 
 // 📊 Histogramme : nombre de RDV par jour/semaine
 export const getRendezVousHistogramme = async (req, res) => {

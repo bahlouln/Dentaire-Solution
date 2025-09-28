@@ -55,21 +55,16 @@ router.delete("/secretaires/:id", deleteSecretaire);
 
 
 
-router.get("/", getRendezVous);
-router.post("/", createRendezVous);
-router.put("/:id", updateRendezVous);
-router.delete("/:id", deleteRendezVous);
+router.get("/rendezvous", getRendezVous);
+router.post("/rendezvous", createRendezVous);
+router.put("/rendezvous/:id", updateRendezVous);
+router.delete("/rendezvous/:id", deleteRendezVous);
+
+
 router.get("/stats/histogramme", getRendezVousHistogramme);
 router.get("/stats/courbe", getRendezVousCourbe);
 router.get("/stats/quick", getQuickStats);
 router.get("/stats/annual", getRendezVousAnnual);
-// Routes
-//router.post("/", authMiddleware, authorizeRoles("admin"), createDentiste);
-//router.post("/", createDentiste);        // ➕ Ajouter dentiste
-//router.get("/", getDentistes);          // 📋 Liste dentistes
-//router.get("/:id", getDentisteById);    // 🔍 Un dentiste
-//router.put("/:id",updateDentiste);     // ✏️ Modifier
-//router.delete("/:id", deleteDentiste);  // ❌ Supprimer
-//router.get("/:id/secretaires", getDentisteSecretaires); 
+
 
 export default router;
