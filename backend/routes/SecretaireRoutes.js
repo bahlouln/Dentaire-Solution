@@ -1,6 +1,6 @@
 import express from "express";
 import { createPatient, deletePatient, getPatients, updatePatient } from "../controllers/patientController.js";
-import { createRendezVous, deleteRendezVous, getRendezVous, updateRendezVous } from "../controllers/RendezVousController.js";
+import { createRendezVous, createRendezVousSecretaire, deleteRendezVous, getRendezVous, updateRendezVous } from "../controllers/RendezVousController.js";
 import { authenticateToken } from "./AuthRoutes.js";
 import Dentiste from '../models/Dentiste.js';
 import Secretaire from "../models/Secretaire.js";
@@ -60,7 +60,7 @@ router.delete("/patients/:id", deletePatient);
 
 
 router.get("/rendezvous", getRendezVous);
-router.post("/rendezvous", createRendezVous);
+router.post("/rendezvous", createRendezVousSecretaire);
 router.put("/rendezvous/:id", updateRendezVous);
 router.delete("/rendezvous/:id", deleteRendezVous);
 export default router;

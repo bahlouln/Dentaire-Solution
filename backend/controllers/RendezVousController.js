@@ -214,6 +214,44 @@ export const getRendezVousAnnual = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error });
   }
 };
+// ➕ Créer un rendez-vous via une secrétaire
+export const createRendezVousSecretaire = async (req, res) => {
+  try {
+    const { patientId, dateDebut, dateFin, note } = req.body;
+
+    // ✅ Validation des champs obligatoires
+    if (!patientId || !dateDebut || !dateFin) {
+      return res.status(400).json({ message: "Champs requis manquants" });
+    }
+
+    // ✅ On récupère le dentiste lié à la secrétaire (injecté par attachSecretaireAndDentiste)
+    const dentiste = req.dentiste;
+    if (!dentiste) {
+      return res.status(404).json({ message: "Dentiste non trouvé" });
+    }
+
+    // ✅ Créer le rendez-vous
+    const newRdv = await RendezVous.create({
+      patientId,
+      dentisteId: dentiste.id,
+      dateDebut,
+      dateFin,
+      note: note || null,
+    });
+
+    res.status(201).json({
+      message: "Rendez-vous créé avec succès",
+      rendezvous: newRdv,
+    });
+  } catch (error) {
+    console.error("Erreur création RDV par secrétaire:", error);
+    res.status(500).json({
+      message: "Erreur serveur lors de la création du rendez-vous",
+      error: error.message || error,
+    });
+  }
+};
+
 
 
 
