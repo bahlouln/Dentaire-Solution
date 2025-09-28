@@ -97,4 +97,16 @@ export const authenticateToken = (req, res, next) => {
         next();
     });
 };
+router.get('/verify', authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.userId).select('-password');
+    if (!user || !user.isActive) {
+      return res.status(401).json({ error: 'Utilisateur non trouvé' });
+    }
+    
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
 export default router;
