@@ -32,7 +32,7 @@ export const getPatients = async (req, res) => {
 
     // Récupérer tous les patients liés à ce dentiste
     const patients = await Patient.findAll({
-      where: { dentisteId: req.User.dentisteId },
+      where: { dentisteId: req.user.dentisteId},
     });
 
     if (!patients || patients.length === 0) {

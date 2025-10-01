@@ -19,7 +19,7 @@ export const createSecretaire = async (req, res) => {
     // 3️⃣ Créer la secrétaire liée au dentiste connecté
     const newSecretaire = await Secretaire.create({
       userId: newUser.id,
-      dentisteId: req.dentiste.id,
+      dentisteId: req.user.dentisteId,
     });
 
     res
@@ -87,7 +87,7 @@ export const getSecretaires = async (req, res) => {
 
 
     const secretaires = await Secretaire.findAll({
-      where: { dentisteId: req.user.dentisteId },
+      where: { dentisteId: req.user.dentisteId},
       include: [{ model: User, attributes: ["id", "nom", "email", "role"] }],
     });
 
@@ -101,5 +101,3 @@ export const getSecretaires = async (req, res) => {
     res.status(500).json({ message: "Erreur serveur", error: error.message });
   }
 };
-
-
