@@ -1,87 +1,150 @@
 import { Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
-import RendezVousCalendar from "./Components/Calendar/RendezVousCalendar";
-import LoginDentiste from "./Components/auth/LoginDentiste.jsx";
-import RegisterDentiste from "./Components/auth/RegisterDentiste.jsx";
-import AddAppointment from "./Components/forms/AddAppointment.jsx";
-import SidebarComponent from "./layouts/Sidebar.jsx";
-import ListeSecretaires from "./Components/lists/ListeSecretaires.jsx";
-import Navbar from "./layouts/Navbar.jsx";
-import AjouterSecretaire from "./Components/forms/AjouterSecretaire.jsx";
-import ListePatients from "./Components/lists/ListePatients.jsx";
-import AjouterPatient from "./Components/forms/AjouterPatient.jsx";
-import Dashboard from "./Components/Dashboard/Dashboard.jsx";
 
+// ---------- Composants dentiste ----------
+import LoginDentiste from "./Components/dentiste/auth/LoginDentiste.jsx";
+import Dashboard from "./Components/dentiste/Dashboard/Dashboard.jsx";
+import RendezVousCalendar from "./Components/dentiste/Calendar/RendezVousCalendar.jsx";
+import AddAppointment from "./Components/dentiste/forms/AddAppointment.jsx";
+import ListePatients from "./Components/dentiste/lists/ListePatients.jsx";
+import AjouterPatient from "./Components/dentiste/forms/AjouterPatient.jsx";
+import ListeSecretaires from "./Components/dentiste/lists/ListeSecretaires.jsx";
+import AjouterSecretaire from "./Components/dentiste/forms/AjouterSecretaire.jsx";
+import Navbar from "./Components/dentiste/layouts/Navbar.jsx";
+import SidebarComponent from "./Components/dentiste/layouts/Sidebar.jsx";
+
+// ---------- Composants secrétaire ----------
+import LoginSecretaire from "./Components/secretaire/auth/LoginSecretaire.jsx";
+import RendezVousCalendars from "./Components/secretaire/Calendar/RendezVousCalendars.jsx";
+import AddAppointments from "./Components/secretaire/forms/AddAppointments.jsx";
+import ListePatientss from "./Components/secretaire/lists/ListePatientss.jsx";
+import AjouterPatients from "./Components/secretaire/forms/AjouterPatients.jsx";
+
+// ---------- Composants admin ----------
+import AdminLogin from "./Components/admin/auth/AdminLogin.jsx";
+import AdminDashboard from "./Components/admin/Dashboard/AdminDashboard.jsx";
+import ListeDentistes from "./Components/admin/lists/listeDentistes.jsx";
+import AddDentistes from "./Components/admin/forms/AddDentistes.jsx";
+
+// ---------- Auth ----------
+import PrivateRoute from "./Components/context/PrivateRoute.jsx";
+import SidebarsecComponent from "./Components/secretaire/layouts/Sidebarsec.jsx";
+import { useAuth } from "./Components/context/AuthContext.jsx";
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
 const isAuthenticated = () => !!getToken();
 
 // ---------- Guards ----------
 function RequireAuth({ children }) {
-    const location = useLocation();
-    if (!isAuthenticated()) {
-        // pas de token -> va au login et garde d’où on venait
-        return <Navigate to="/login-dentiste" replace state={{ from: location }} />;
-    }
-    return children ?? <Outlet />;
+  const location = useLocation();
+  if (!isAuthenticated()) {
+    return <Navigate to="/login-dentiste" replace state={{ from: location }} />;
+  }
+  return children ?? <Outlet />;
 }
 
 function PublicOnly({ children }) {
-    // si déjà loggé, inutile d’aller au login
-    if (isAuthenticated()) {
-        return <Navigate to="/" replace />;
-    }
-    return children ?? <Outlet />;
+  if (isAuthenticated()) {
+    return <Navigate to="/" replace />;
+  }
+  return children ?? <Outlet />;
 }
 
-// ---------- Layout protégé (navbar + sidebar) ----------
-function Layout() {
-    const location = useLocation();
-    // Masquer Navbar/Sidebar sur login
-    const isLogin = location.pathname === "/login-dentiste";
+// ---------- Layout Dentiste ----------
+function DentisteLayout() {
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      
+        <main style={{ flex: 1, padding: "1rem" }}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
 
-    return (
-        <div style={{ display: "flex" }}>
-            {!isLogin && <SidebarComponent />}
-            <div style={{ flex: 1 }}>
-                {!isLogin && <Navbar />}
-                <main>
-                    <Outlet />
-                </main>
-            </div>
-        </div>
-    );
+// ---------- Layout Secrétaire ----------
+function SecretaireLayout() {
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+      <SidebarsecComponent />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+        <Navbar />
+        <main style={{ flex: 1, padding: "1rem" }}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+}
+
+// ---------- Layout Admin ----------
+function AdminLayout() {
+  return (
+    <div style={{ display: "flex", minHeight: "100vh" }}>
+     
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      
+        <main style={{ flex: 1, padding: "1rem" }}>
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
 }
 
 // ---------- App ----------
 export default function App() {
-    return (
-        <Routes>
-            {/* Route Login: accessible seulement si NON connecté */}
-            <Route element={<PublicOnly />}>
-                <Route path="/login-dentiste" element={<LoginDentiste />} />
-                {/* (optionnel) page register publique si tu veux */}
-                <Route path="/register-dentiste" element={<RegisterDentiste />} />
-            </Route>
+  return (
+    <Routes>
+      {/* Routes publiques */}
+      <Route element={<PublicOnly />}>
+        <Route path="login-dentiste" element={<LoginDentiste />} />
+        <Route path="login-secretaire" element={<LoginSecretaire />} />
+        <Route path="admin/login" element={<AdminLogin />} />
+      </Route>
 
-            {/* Tout le reste est protégé par RequireAuth */}
-            <Route element={<RequireAuth />}>
-                <Route element={<Layout />}>
-                    {/* index "/" -> envoie vers le calendrier (tu peux changer la cible) */}
-                    <Route index element={<Navigate to="/calendar" replace />} />
+      {/* Routes admin protégées */}
+      <Route
+        path="admin"
+        element={
+          <PrivateRoute requireAdmin={true}>
+            <AdminLayout />
+          </PrivateRoute>
+        }
+      >
+        <Route path="dashboard" element={<AdminDashboard />} />
+        <Route path="dentistes" element={<ListeDentistes />} />
+        <Route path="add-dentiste" element={<AddDentistes />} />
+      </Route>
 
-                    <Route path="/calendar" element={<RendezVousCalendar />} />
-                    <Route path="/add-appointment" element={<AddAppointment />} />
-                    <Route path="/add-appointment/:dateStr" element={<AddAppointment />} />
-                    <Route path="/ListeSecretaires" element={<ListeSecretaires />} />
-                    <Route path="/add-secretary" element={<AjouterSecretaire />} />
-                    <Route path="/ListePatients" element={<ListePatients />} />
-                    <Route path="/add-patient" element={<AjouterPatient />} />
-                    <Route path="/dashboard" element={<Dashboard />} />
-                </Route>
-            </Route>
+      {/* Routes dentiste protégées */}
+      <Route element={<RequireAuth />}>
+        <Route path="/" element={<DentisteLayout />}>
+          <Route index element={<Navigate to="calendar" replace />} />
+          <Route path="calendar" element={<RendezVousCalendar />} />
+          <Route path="add-appointment" element={<AddAppointment />} />
+          <Route path="add-appointment/:dateStr" element={<AddAppointment />} />
+          <Route path="ListeSecretaires" element={<ListeSecretaires />} />
+          <Route path="add-secretary" element={<AjouterSecretaire />} />
+          <Route path="ListePatients" element={<ListePatients />} />
+          <Route path="add-patient" element={<AjouterPatient />} />
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
 
-            {/* Catch-all: redirige vers "/" (déclenchera RequireAuth) */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-    );
+        {/* Routes secrétaire protégées */}
+        <Route path="secretaire" element={<SecretaireLayout />}>
+          <Route index element={<Navigate to="calendar" replace />} />
+          <Route path="secretaire/calendar" element={<RendezVousCalendars />} />
+          <Route path="secretaire/add-appointments" element={<AddAppointments />} />
+          <Route path="secretaire/ListePatients" element={<ListePatientss />} />
+          <Route path="secretaire/add-patient" element={<AjouterPatients />} />
+        </Route>
+      </Route>
+
+      {/* Catch-all */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
 }

@@ -16,12 +16,14 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const BASE_URL = "http://localhost:5000";
+
     const isTokenExpired = useCallback((token) => {
         try {
             const payload = JSON.parse(atob(token.split('.')[1]));
             const currentTime = Date.now() / 1000;
             return payload.exp < currentTime;
-        } catch (error) {
+        } catch {
             return true;
         }
     }, []);
@@ -35,19 +37,20 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const logout = useCallback(() => {
-        localStorage.removeItem('last-auto-sync-timestamp');
         localStorage.removeItem('token');
         setAuthToken(null);
         setUser(null);
         setError(null);
+        console.log("Déconnexion effectuée");
     }, [setAuthToken]);
 
+    // Intercepteur pour gérer automatiquement les 401
     useEffect(() => {
         const responseInterceptor = axios.interceptors.response.use(
             (response) => response,
             (error) => {
                 if (error.response?.status === 401) {
-                    console.log('Token expiré, déconnexion automatique');
+                    console.log('Token expiré ou non autorisé, déconnexion automatique');
                     logout();
                     if (!window.location.pathname.includes('/login')) {
                         window.location.href = '/login';
@@ -56,16 +59,12 @@ export const AuthProvider = ({ children }) => {
                 return Promise.reject(error);
             }
         );
-
-        return () => {
-            axios.interceptors.response.eject(responseInterceptor);
-        };
+        return () => axios.interceptors.response.eject(responseInterceptor);
     }, [logout]);
 
     const checkAuth = useCallback(async () => {
-
-
         const token = localStorage.getItem('token');
+        console.log("CheckAuth: token =", token);
 
         if (!token) {
             setLoading(false);
@@ -74,9 +73,7 @@ export const AuthProvider = ({ children }) => {
 
         if (isTokenExpired(token)) {
             console.log('Token expiré détecté côté client');
-            localStorage.removeItem('token');
-            setAuthToken(null);
-            setUser(null);
+            logout();
             setError('Session expirée, veuillez vous reconnecter');
             setLoading(false);
             return;
@@ -85,35 +82,35 @@ export const AuthProvider = ({ children }) => {
         setAuthToken(token);
 
         try {
-            const response = await axios.get('/api/auth/verify');
-            setUser(response.data.user);
+            const response = await axios.get(`${BASE_URL}/api/auth/verify`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // ✅ Attacher le token au user
+            setUser({ ...response.data.user, token });
             setError(null);
-        } catch (error) {
-            console.error('Erreur lors de la vérification du token:', error);
-            localStorage.removeItem('token');
-            setAuthToken(null);
-            setUser(null);
-
-            if (error.response?.status === 401) {
-                setError('Session expirée, veuillez vous reconnecter');
-            } else {
-                setError('Erreur de vérification de l\'authentification');
-            }
+            console.log('Vérification réussie, user reçu:', response.data.user);
+        } catch (err) {
+            console.error('Erreur lors de la vérification du token:', err);
+            logout();
+            setError(err.response?.data?.error || 'Erreur de vérification de l\'authentification');
         }
 
         setLoading(false);
-    }, [isTokenExpired, setAuthToken]);
+    }, [isTokenExpired, setAuthToken, logout]);
 
     useEffect(() => {
         checkAuth();
-    }, []);
+    }, [checkAuth]);
 
     const login = async (email, password, isAdmin = false) => {
         setLoading(true);
         setError(null);
 
         try {
-            const endpoint = isAdmin ? '/api/auth/admin/login' : '/api/auth/login';
+            const endpoint = isAdmin
+                ? `${BASE_URL}/api/auth/admin/login`
+                : `${BASE_URL}/api/auth/login`;
+
             const response = await axios.post(endpoint, { email, password });
             const { token, user } = response.data;
 
@@ -123,19 +120,17 @@ export const AuthProvider = ({ children }) => {
 
             localStorage.setItem('token', token);
             setAuthToken(token);
-            setUser(user);
+            // ✅ Attacher le token au user
+            setUser({ ...user, token });
             setError(null);
 
+            console.log("Login réussi, user:", user);
             return { success: true };
-        } catch (error) {
-            console.error('Erreur lors de la connexion:', error);
-            const errorMessage = error.response?.data?.error || 'Erreur de connexion';
+        } catch (err) {
+            console.error('Erreur lors de la connexion:', err);
+            const errorMessage = err.response?.data?.error || 'Erreur de connexion';
             setError(errorMessage);
-
-            return {
-                success: false,
-                error: errorMessage
-            };
+            return { success: false, error: errorMessage };
         } finally {
             setLoading(false);
         }
@@ -143,24 +138,21 @@ export const AuthProvider = ({ children }) => {
 
     const refreshToken = useCallback(async () => {
         try {
-            const response = await axios.post('/api/auth/refresh');
+            const response = await axios.post(`${BASE_URL}/api/auth/refresh`);
             const { token } = response.data;
-
             localStorage.setItem('token', token);
             setAuthToken(token);
-
+            if (user) setUser((u) => ({ ...u, token }));
             return { success: true };
-        } catch (error) {
-            console.error('Erreur lors du rafraîchissement du token:', error);
+        } catch (err) {
+            console.error('Erreur lors du rafraîchissement du token:', err);
             logout();
             return { success: false };
         }
-    }, [logout, setAuthToken]);
+    }, [logout, setAuthToken, user]);
 
     const checkTokenValidity = useCallback(() => {
-        if (!loading) {
-            checkAuth();
-        }
+        if (!loading) checkAuth();
     }, [checkAuth, loading]);
 
     const value = {
@@ -174,7 +166,7 @@ export const AuthProvider = ({ children }) => {
         isDentiste: user?.role === 'dentiste',
         isSecretaire: user?.role === 'secretaire',
         checkTokenValidity,
-        refreshToken
+        refreshToken,
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

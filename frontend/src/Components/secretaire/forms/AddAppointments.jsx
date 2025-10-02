@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"; 
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../../context/AuthContext";
 
-export default function AddAppointment() {
+export default function AddAppointments() {
   const navigate = useNavigate();
   const { dateStr } = useParams();
+  const { user, loading } = useAuth();
+  const token = user?.token;
+
   const [patients, setPatients] = useState([]);
   const [form, setForm] = useState({
     patientId: "",
@@ -13,17 +17,21 @@ export default function AddAppointment() {
   });
   const [msg, setMsg] = useState("");
 
-  // Charger les patients du dentiste connecté
+  // ⚡ Charger les patients seulement si l'utilisateur est secrétaire et token existant
   useEffect(() => {
     const fetchPatients = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) {
-          setMsg("❌ Vous devez vous reconnecter");
-          return;
-        }
+      if (!token) {
+        setMsg("❌ Vous devez vous reconnecter");
+        return;
+      }
 
-        const res = await axios.get("http://localhost:5000/patients/me", {
+      if (user.role !== "secretaire") {
+        setMsg("❌ Accès réservé aux secrétaires");
+        return;
+      }
+
+      try {
+        const res = await axios.get("http://localhost:5000/api/secretaires/patients", {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -37,24 +45,24 @@ export default function AddAppointment() {
     };
 
     fetchPatients();
-  }, []);
+  }, [token, user]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    setMsg("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMsg("");
 
-    try {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setMsg("❌ Vous devez vous reconnecter");
-        return;
-      }
+    if (!token) {
+      setMsg("❌ Vous devez vous reconnecter");
+      return;
+    }
 
-      await axios.post("http://localhost:5000/rendezvous", form, {
+    try {
+      await axios.post("http://localhost:5000/api/agenda/rendezvous", form, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -66,10 +74,13 @@ export default function AddAppointment() {
     }
   };
 
+  if (loading) return <p className="text-center mt-4">Chargement…</p>;
+  if (!user) return <p className="text-center mt-4 text-red-600">Vous devez être connecté pour créer un rendez-vous.</p>;
+  if (user.role !== "secretaire") return <p className="text-center mt-4 text-red-600">Accès réservé aux secrétaires.</p>;
+
   return (
     <div className="flex min-h-screen bg-gray-100 items-center justify-center p-4">
       <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-lg">
-        {/* En-tête avec bouton Nouveau patient */}
         <div className="flex items-center justify-between mb-6 border-b pb-4">
           <h2 className="text-xl font-bold text-gray-800">Nouveau rendez-vous</h2>
           <button
