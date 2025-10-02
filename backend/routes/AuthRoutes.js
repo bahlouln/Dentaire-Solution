@@ -115,5 +115,27 @@ export const authenticateToken = (req, res, next) => {
     next();
   });
 };
+router.get("/verify", authenticateToken, async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId, {
+      attributes: { exclude: ["motDePasse", "password", "passwordHash"] },
+    });
+
+    if (!user || user.isActive === false) {
+      return res.status(401).json({ error: "Utilisateur non trouvé ou désactivé" });
+    }
+
+    // Ajout du dentisteId si c’est un dentiste
+    let extra = {};
+    if (req.user.role === "dentiste" && req.user.dentisteId) {
+      extra.dentisteId = req.user.dentisteId;
+    }
+
+    return res.json({ user: { ...user.toJSON(), ...extra } });
+  } catch (error) {
+    console.error("Erreur verify:", error);
+    return res.status(500).json({ error: "Erreur serveur", details: error.message });
+  }
+});
 
 export default router;

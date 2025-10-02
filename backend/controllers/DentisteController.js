@@ -63,21 +63,25 @@ export const updateDentiste = async (req, res) => {
   }
 };
 
-// ❌ Supprimer un dentiste
 export const deleteDentiste = async (req, res) => {
   try {
     const dentiste = await Dentiste.findByPk(req.params.id);
     if (!dentiste) return res.status(404).json({ message: "Dentiste non trouvé" });
 
-    req.params.id = dentiste.userId;
-    // Appelez deleteUser sans renvoyer de réponse directement
-    await deleteUser(req); // Supprimez "res" si deleteUser gère la réponse
+    // Supprimer l'utilisateur associé via la relation
+    const user = await dentiste.getUser(); // Sequelize crée getUser() automatiquement
+    if (user) await user.destroy();
+
+    // Supprimer le dentiste
     await dentiste.destroy();
+
     res.json({ message: "Dentiste supprimé avec succès" });
   } catch (error) {
-    res.status(500).json({ message: "Erreur lors de la suppression du dentiste", error });
+    console.error("Erreur deleteDentiste:", error);
+    res.status(500).json({ message: "Erreur lors de la suppression du dentiste", error: error.message });
   }
 };
+
 
 // ➕ Avoir toutes les secrétaires d’un dentiste
 export const getDentisteSecretaires = async (req, res) => {

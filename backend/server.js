@@ -5,7 +5,6 @@ import SecretaireRoutes from "./routes/SecretaireRoutes.js";
 import authRoutes from "./routes/AuthRoutes.js";
 import dotenv from 'dotenv';
 import cors from "cors";
-import PatientRoutes from "./routes/PatientRoutes.js"; // 👈 importer le routeur patients
 import AdminRoutes from "./routes/admin.js";
 import AgendaRoutes    from "./routes/agenda.js";
 
@@ -26,7 +25,6 @@ app.use(express.json());
 app.use("/api/dentistes", dentisteRoutes);
 app.use("/api/secretaires", SecretaireRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/patients", PatientRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/agenda", AgendaRoutes);
 
