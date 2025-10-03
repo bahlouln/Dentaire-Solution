@@ -110,6 +110,15 @@ export default function LoginDentiste() {
                         >
                             {loading ? "Connexion..." : "LOGIN"}
                         </button>
+                        <div className="mt-4">
+    <button
+        type="button"
+        onClick={() => navigate("/admin/login")}
+        className="inline-flex w-full items-center justify-center rounded-2xl border border-indigo-600 px-5 py-3 font-semibold text-indigo-600 bg-white shadow-sm transition hover:translate-y-[1px] hover:bg-indigo-50 focus:outline-none focus:ring-4 focus:ring-indigo-200"
+    >
+        Accès Admin
+    </button>
+</div>
                     </form>
                 </div>
             </div>
