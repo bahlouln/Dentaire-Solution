@@ -22,13 +22,11 @@ import AjouterPatients from "./Components/secretaire/forms/AjouterPatients.jsx";
 // ---------- Composants admin ----------
 import AdminLogin from "./Components/admin/auth/AdminLogin.jsx";
 import AdminDashboard from "./Components/admin/Dashboard/AdminDashboard.jsx";
-import ListeDentistes from "./Components/admin/lists/listeDentistes.jsx";
 import AddDentistes from "./Components/admin/forms/AddDentistes.jsx";
 
 // ---------- Auth ----------
 import PrivateRoute from "./Components/context/PrivateRoute.jsx";
 import SidebarsecComponent from "./Components/secretaire/layouts/Sidebarsec.jsx";
-import { useAuth } from "./Components/context/AuthContext.jsx";
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
 const isAuthenticated = () => !!getToken();
@@ -115,7 +113,6 @@ export default function App() {
         }
       >
         <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="dentistes" element={<ListeDentistes />} />
         <Route path="add-dentiste" element={<AddDentistes />} />
       </Route>
 

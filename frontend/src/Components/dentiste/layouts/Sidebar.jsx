@@ -16,7 +16,6 @@ export default function SidebarComponent() {
     const [openMobile, setOpenMobile] = useState(false);
 
     const items = [
-        { to: "/listeDentistes", label: "liste des dentistes", icon: HiInbox },
 
         { to: "/calendar", label: "calendrier", icon: HiInbox },
         { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
