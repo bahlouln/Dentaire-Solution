@@ -9,11 +9,12 @@ const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
 
+// 🔑 Récupère le champ mot de passe correct dans la DB
 function pickPasswordField(user) {
   return user.motDePasse ?? user.passwordHash ?? user.password ?? user.dataValues?.motDePasse ?? user.dataValues?.passwordHash ?? user.dataValues?.password;
 }
 
-// Utilitaire: construit le payload en ajoutant dentisteId si role = 'dentiste'
+// 🔧 Construit le payload JWT en ajoutant dentisteId si role = 'dentiste'
 async function buildJwtPayload(user) {
   const payload = {
     userId: user.id,
@@ -30,7 +31,7 @@ async function buildJwtPayload(user) {
   return payload;
 }
 
-// --------- Login DENTISTE ---------
+// --------- Login DENTISTE/secretaire ---------
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -107,16 +108,26 @@ router.post("/admin/login", async (req, res) => {
 export const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1];
-  if (!token) return res.status(401).json({ error: "Token manquant" });
+  if (!token) {
+    console.log("Token manquant dans la requête !");
+    return res.status(401).json({ error: "Token manquant" });
+  }
 
   jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: "Token invalide" });
+    if (err) {
+      console.log("Token invalide ou expiré !");
+      return res.status(403).json({ error: "Token invalide" });
+    }
     req.user = user; // { userId, email, role, [dentisteId] }
     next();
   });
 };
+
+// --------- Vérification du token ---------
 router.get("/verify", authenticateToken, async (req, res) => {
   try {
+    if (!req.user) return res.status(401).json({ error: "Utilisateur non authentifié" });
+
     const user = await User.findByPk(req.user.userId, {
       attributes: { exclude: ["motDePasse", "password", "passwordHash"] },
     });

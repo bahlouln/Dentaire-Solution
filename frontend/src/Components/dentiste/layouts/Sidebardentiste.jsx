@@ -10,7 +10,7 @@ import {
     HiX,
 } from "react-icons/hi";
 
-export default function SidebarsecComponent() {
+export default function Sidebardentiste() {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
     const [openMobile, setOpenMobile] = useState(false);
@@ -18,7 +18,8 @@ export default function SidebarsecComponent() {
     const items = [
 
         { to: "/calendar", label: "calendrier", icon: HiInbox },
-        { to: "/secretaire/ListePatients", label: "Patients", icon: HiShoppingBag },
+        { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
+        { to: "/ListeSecretaires", label: "Secrétaires", icon: HiUser },
         { to: "/Dashboard", label: "Dashboard", icon: HiChartPie },
 
     ];
@@ -130,7 +131,7 @@ export default function SidebarsecComponent() {
                     openMobile ? "translate-x-0" : "-translate-x-full md:translate-x-0",
                     "w-72",
                 ].join(" ")}
-                aria-label="Sidebarsec"
+                aria-label="Sidebar"
             >
                 {SidebarInner}
             </aside>

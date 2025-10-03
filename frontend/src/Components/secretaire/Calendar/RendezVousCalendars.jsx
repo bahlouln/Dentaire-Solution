@@ -4,8 +4,8 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import Navbar from "../layouts/Navbar.jsx";
-import SidebarComponent from "../layouts/Sidebarsec.jsx";
+import Navbar from "../layouts/Navbarsecreataire.jsx";
+import SidebarComponent from "../layouts/Sidebarsecretaire.jsx";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext.jsx";
 
@@ -128,7 +128,6 @@ export default function RendezVousCalendar() {
     if (loading) {
         return (
             <div className="flex min-h-screen bg-slate-50">
-                <SidebarComponent />
                 <main className="flex-1 p-4 sm:p-6 lg:p-8">
                    
 

@@ -53,7 +53,7 @@ export const getPatientsBySecretaireConnecte = async (req, res) => {
   try {
     // 1️⃣ Trouver la secrétaire connectée
     const secretaire = await Secretaire.findOne({
-      where: { userId: req.user.id },
+      where: { userId: req.user.userId },
       include: [
         {
           model: Dentiste,

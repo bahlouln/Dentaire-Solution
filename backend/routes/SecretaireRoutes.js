@@ -1,5 +1,5 @@
 import express from "express";
-import { createPatient, deletePatient, getPatients, updatePatient } from "../controllers/patientController.js";
+import { createPatient, deletePatient, getPatients, getPatientsBySecretaireConnecte, updatePatient } from "../controllers/patientController.js";
 import { authenticateToken } from "./AuthRoutes.js";
 
 
@@ -17,9 +17,9 @@ router.use(authenticateToken);
 router.use(requireSecretaire);
 
 
+router.get("/patients", getPatientsBySecretaireConnecte);
 
 router.post("/patients", createPatient);
-router.get("/patients", getPatients);
 router.put("/patients/:id", updatePatient);
 router.delete("/patients/:id", deletePatient);
 

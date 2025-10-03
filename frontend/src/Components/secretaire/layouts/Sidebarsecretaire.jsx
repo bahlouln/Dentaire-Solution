@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
-    HiChartPie,
     HiInbox,
     HiShoppingBag,
     HiUser,
@@ -10,7 +9,7 @@ import {
     HiX,
 } from "react-icons/hi";
 
-export default function SidebarComponent() {
+export default function Sidebarsecretaire() {
     const navigate = useNavigate();
     const [collapsed, setCollapsed] = useState(false);
     const [openMobile, setOpenMobile] = useState(false);
@@ -18,9 +17,7 @@ export default function SidebarComponent() {
     const items = [
 
         { to: "/calendar", label: "calendrier", icon: HiInbox },
-        { to: "/ListePatients", label: "Patients", icon: HiShoppingBag },
-        { to: "/ListeSecretaires", label: "Secrétaires", icon: HiUser },
-        { to: "/Dashboard", label: "Dashboard", icon: HiChartPie },
+        { to: "/secretaire/ListePatients", label: "Patients", icon: HiShoppingBag },
 
     ];
 
@@ -131,7 +128,7 @@ export default function SidebarComponent() {
                     openMobile ? "translate-x-0" : "-translate-x-full md:translate-x-0",
                     "w-72",
                 ].join(" ")}
-                aria-label="Sidebar"
+                aria-label="Sidebarsec"
             >
                 {SidebarInner}
             </aside>

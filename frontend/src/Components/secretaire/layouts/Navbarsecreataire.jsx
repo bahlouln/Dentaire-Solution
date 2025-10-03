@@ -10,7 +10,7 @@ import { FiBell, FiLogOut, FiMenu, FiX } from "react-icons/fi";
  * - Icône de notifications (avec badge) + bouton Déconnexion
  * - Accessibilité: aria-controls, aria-expanded, sr-only
  */
-export default function Navbar({ unread = 0 }) {
+export default function Navbarsecretaire({ unread = 0 }) {
     const navigate = useNavigate();
     const [open, setOpen] = useState(false);
 

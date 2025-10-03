@@ -9,8 +9,6 @@ import ListePatients from "./Components/dentiste/lists/ListePatients.jsx";
 import AjouterPatient from "./Components/dentiste/forms/AjouterPatient.jsx";
 import ListeSecretaires from "./Components/dentiste/lists/ListeSecretaires.jsx";
 import AjouterSecretaire from "./Components/dentiste/forms/AjouterSecretaire.jsx";
-import Navbar from "./Components/dentiste/layouts/Navbar.jsx";
-import SidebarComponent from "./Components/dentiste/layouts/Sidebar.jsx";
 
 // ---------- Composants secrétaire ----------
 import LoginSecretaire from "./Components/secretaire/auth/LoginSecretaire.jsx";
@@ -24,11 +22,15 @@ import AdminLogin from "./Components/admin/auth/AdminLogin.jsx";
 import AdminDashboard from "./Components/admin/Dashboard/AdminDashboard.jsx";
 import AddDentistes from "./Components/admin/forms/AddDentistes.jsx";
 
-// ---------- Auth ----------
-import PrivateRoute from "./Components/context/PrivateRoute.jsx";
-import SidebarsecComponent from "./Components/secretaire/layouts/Sidebarsec.jsx";
+// ---------- Layouts ----------
+import Sidebardentiste from "./Components/dentiste/layouts/Sidebardentiste.jsx";
+import Navbardentiste from "./Components/dentiste/layouts/Navbardentiste.jsx";
+import Sidebarsecretaire from "./Components/secretaire/layouts/Sidebarsecretaire.jsx";
+import Navbarsecretaire from "./Components/secretaire/layouts/Navbarsecreataire.jsx";
+
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
+const getRole = () => localStorage.getItem("role");
 const isAuthenticated = () => !!getToken();
 
 // ---------- Guards ----------
@@ -42,7 +44,10 @@ function RequireAuth({ children }) {
 
 function PublicOnly({ children }) {
   if (isAuthenticated()) {
-    return <Navigate to="/" replace />;
+    const role = getRole();
+    if (role === "dentiste") return <Navigate to="/" replace />;
+    if (role === "secretaire") return <Navigate to="/secretaire" replace />;
+    if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
   }
   return children ?? <Outlet />;
 }
@@ -51,9 +56,9 @@ function PublicOnly({ children }) {
 function DentisteLayout() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      
+      <Sidebardentiste />
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      
+        <Navbardentiste />
         <main style={{ flex: 1, padding: "1rem" }}>
           <Outlet />
         </main>
@@ -66,9 +71,9 @@ function DentisteLayout() {
 function SecretaireLayout() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-      <SidebarsecComponent />
+      <Sidebarsecretaire />
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-        <Navbar />
+        <Navbarsecretaire />
         <main style={{ flex: 1, padding: "1rem" }}>
           <Outlet />
         </main>
@@ -81,9 +86,7 @@ function SecretaireLayout() {
 function AdminLayout() {
   return (
     <div style={{ display: "flex", minHeight: "100vh" }}>
-     
       <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-      
         <main style={{ flex: 1, padding: "1rem" }}>
           <Outlet />
         </main>
@@ -107,9 +110,9 @@ export default function App() {
       <Route
         path="admin"
         element={
-          <PrivateRoute requireAdmin={true}>
+          <RequireAuth>
             <AdminLayout />
-          </PrivateRoute>
+          </RequireAuth>
         }
       >
         <Route path="dashboard" element={<AdminDashboard />} />
@@ -133,10 +136,10 @@ export default function App() {
         {/* Routes secrétaire protégées */}
         <Route path="secretaire" element={<SecretaireLayout />}>
           <Route index element={<Navigate to="calendar" replace />} />
-          <Route path="secretaire/calendar" element={<RendezVousCalendars />} />
-          <Route path="secretaire/add-appointments" element={<AddAppointments />} />
-          <Route path="secretaire/ListePatients" element={<ListePatientss />} />
-          <Route path="secretaire/add-patient" element={<AjouterPatients />} />
+          <Route path="calendar" element={<RendezVousCalendars />} />
+          <Route path="add-appointments" element={<AddAppointments />} />
+          <Route path="ListePatients" element={<ListePatientss />} />
+          <Route path="add-patient" element={<AjouterPatients />} />
         </Route>
       </Route>
 
