@@ -139,7 +139,7 @@ export default function AddDentistes() {
         headers: { Authorization: `Bearer ${user.token}` }, // ✅ utilise le token du contexte
       });
       setSuccessMsg("Dentiste ajouté avec succès !");
-      setTimeout(() => navigate("/admin/dentistes"), 1200);
+      setTimeout(() => navigate("/admin/dashboard"), 1200);
     } catch (err) {
       setServerError(err?.response?.data?.message || "Erreur lors de l'ajout du dentiste");
     } finally {

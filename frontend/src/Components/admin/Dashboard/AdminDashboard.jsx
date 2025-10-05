@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext.jsx";
-import useDentistes from "../hooks/useDentistes.js";
-import SearchInput from "../../../components/common/SearchInput";
-import ErrorBanner from "../../../components/common/ErrorBanner";
-import Pagination from "../../../components/common/Pagination";
-import LoadingList from "../../../components/common/LoadingList";
-import EmptyState from "../../../components/common/EmptyState";
-import DentistRow from "../../../components/admin/rows/DentistRow.jsx";
+import useDentistes from "../hooks/useDentistes.jsx";
+import SearchInput from "../../common/SearchInput.jsx";
+import ErrorBanner from "../../common/ErrorBanner";
+import Pagination from "../../common/Pagination.jsx";
+import LoadingList from "../../common/LoadingList";
+import EmptyState from "../../common/EmptyState";
+import DentistRow from "../rows/DentistRow";
 import { api } from "../../../api.js" ;
 
 export default function ListeDentistes() {

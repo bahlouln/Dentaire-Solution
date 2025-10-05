@@ -44,7 +44,7 @@ export const api = {
             },
         },
     },
-
+    
     rendezvous: {
         getAll() {
             return http.get("/rendezvous");
