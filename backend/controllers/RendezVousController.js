@@ -2,6 +2,9 @@ import RendezVous from "../models/RendezVous.js";
 import Patient from "../models/Patient.js";
 import Dentiste from "../models/Dentiste.js";
 import { Op } from "sequelize";
+import AppointmentEmailService from "../services/AppointmentEmailService.js";
+import User from "../models/User.js";
+const mailer = new AppointmentEmailService();
 
 export const getRendezVous = async (req, res) => {
     try {
@@ -29,34 +32,62 @@ export const getRendezVousById = async (req, res) => {
 };
 
 export const createRendezVous = async (req, res) => {
-    try {
-        const { patientId, dateDebut, dateFin, note } = req.body;
-        if (!patientId || !dateDebut) {
-            return res.status(400).json({ message: "Champs requis manquants" });
-        }
-
-        const dentisteId = req.dentiste.id;
-
-        // (Facultatif mais recommandé) s’assurer que le patient appartient au dentiste
-        const patient = await Patient.findByPk(patientId);
-        if (!patient) return res.status(404).json({ message: "Patient introuvable" });
-        if ((patient.dentisteId ?? patient.DentisteId) !== dentisteId) {
-            return res.status(403).json({ message: "Patient non autorisé pour ce dentiste" });
-        }
-
-        const newRdv = await RendezVous.create({
-            patientId,
-            dentisteId,
-            dateDebut,
-            dateFin: dateFin || null,
-            note: note || null,
-        });
-
-        res.status(201).json(newRdv);
-    } catch (error) {
-        console.error("Erreur création RDV:", error);
-        res.status(500).json({ message: "Erreur serveur", error: error.message || error });
+  try {
+    const { patientId, dateDebut, dateFin, note } = req.body;
+    if (!patientId || !dateDebut) {
+      return res.status(400).json({ message: "Champs requis manquants" });
     }
+
+    const dentisteId = req.dentiste.id;
+
+    // Vérifier patient + appartenance
+    const patient = await Patient.findByPk(patientId);
+    if (!patient) return res.status(404).json({ message: "Patient introuvable" });
+    if ((patient.dentisteId ?? patient.DentisteId) !== dentisteId) {
+      return res.status(403).json({ message: "Patient non autorisé pour ce dentiste" });
+    }
+
+    // Créer le RDV
+    const newRdv = await RendezVous.create({
+      patientId,
+      dentisteId,
+      dateDebut,
+      dateFin: dateFin || null,
+      note: note || null,
+    });
+
+    // Récupérer l'email via l'association par défaut (alias "User")
+    const dentiste = await Dentiste.findByPk(dentisteId, {
+      include: [{ model: User, attributes: ["email", "nom"] }], // pas d'alias ou as: "User"
+    });
+
+    // Envoi non-bloquant au user.email du dentiste
+    setImmediate(async () => {
+      try {
+        const result = await mailer.sendAppointmentCreated({
+          dentiste,  // => dentiste.User.email
+          patient,
+          rendezvous: {
+            id: newRdv.id,
+            dateDebut: newRdv.dateDebut,
+            dateFin: newRdv.dateFin,
+            notes: newRdv.note ?? note,
+            createdBy: req.user
+              ? { nom: req.user.nom, email: req.user.email }
+              : { nom: "Système" },
+          },
+        });
+        if (!result?.success) console.warn("Email RDV non envoyé:", result);
+      } catch (e) {
+        console.error("❌ Envoi email RDV (dentiste) échec:", e?.message || e);
+      }
+    });
+
+    res.status(201).json(newRdv);
+  } catch (error) {
+    console.error("Erreur création RDV:", error);
+    res.status(500).json({ message: "Erreur serveur", error: error.message || error });
+  }
 };
 
 export const updateRendezVous = async (req, res) => {
@@ -176,3 +207,4 @@ export const getRendezVousAnnual = async (req, res) => {
         res.status(500).json({ message: "Erreur serveur", error: error.message || error });
     }
 };
+
