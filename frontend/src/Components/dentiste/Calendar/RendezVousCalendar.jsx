@@ -167,14 +167,24 @@ export default function RendezVousCalendar() {
              
                 <section className="mt-4 rounded-2xl border border-slate-200 bg-white/80 shadow-sm backdrop-blur flex-1 flex flex-col">
                     <div className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-t-2xl border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-sky-50 px-5 py-4">
-                        <h2 className="text-lg font-semibold text-slate-900">Calendrier des rendez‑vous</h2>
-                        <button
-                            onClick={() => navigate("/add-appointment")}
-                            className="rounded-xl bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-500"
-                        >
-                            Nouveau rendez‑vous
-                        </button>
-                    </div>
+    <h2 className="text-lg font-semibold text-slate-900">Calendrier des rendez-vous</h2>
+    <div className="flex items-center gap-2">
+        <button
+            onClick={() => navigate("/ordonnance")}
+            className="rounded-xl bg-green-600 px-3 py-2 text-white hover:bg-green-500"
+        >
+            🧾 Créer ordonnance
+        </button>
+
+        <button
+            onClick={() => navigate("/add-appointment")}
+            className="rounded-xl bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-500"
+        >
+            ➕ Nouveau rendez-vous
+        </button>
+    </div>
+</div>
+
 
                     {msg && (
                         <div className="mx-5 mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-amber-800">

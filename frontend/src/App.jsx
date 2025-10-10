@@ -27,6 +27,7 @@ import Sidebardentiste from "./Components/dentiste/layouts/Sidebardentiste.jsx";
 import Navbardentiste from "./Components/dentiste/layouts/Navbardentiste.jsx";
 import Sidebarsecretaire from "./Components/secretaire/layouts/Sidebarsecretaire.jsx";
 import Navbarsecretaire from "./Components/secretaire/layouts/Navbarsecreataire.jsx";
+import CreateOrdonnance from "./Components/CreateOrdonnace.jsx";
 
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
@@ -131,6 +132,8 @@ export default function App() {
           <Route path="ListePatients" element={<ListePatients />} />
           <Route path="add-patient" element={<AjouterPatient />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="ordonnance" element={<CreateOrdonnance />} />
+
         </Route>
 
         {/* Routes secrétaire protégées */}
