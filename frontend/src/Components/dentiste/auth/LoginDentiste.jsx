@@ -78,7 +78,7 @@ export default function LoginDentiste() {
 
                         {/* MOT DE PASSE */}
                         <label htmlFor="motDePasse" className="sr-only">Mot de passe</label>
-                        <div className="group relative mb-3 flex h-12 items-stretch overflow-hidden rounded-2xl border border-white/40 bg-white/90 shadow-sm focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100">
+                        <div className="group relative mb-6 flex h-12 items-stretch overflow-hidden rounded-2xl border border-white/40 bg-white/90 shadow-sm focus-within:border-indigo-500 focus-within:ring-4 focus-within:ring-indigo-100">
                             <span className="inline-flex items-center px-3 text-slate-700">
                                 <FaLock className="h-4 w-4" aria-hidden />
                             </span>
@@ -106,19 +106,27 @@ export default function LoginDentiste() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="inline-flex w-full items-center justify-center rounded-2xl bg-indigo-600 px-5 py-3 font-semibold text-white shadow-sm transition hover:translate-y-[1px] hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="mb-4 w-full rounded-2xl bg-indigo-600 px-6 py-3 font-semibold text-white shadow-md transition duration-200 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 disabled:opacity-75 disabled:cursor-not-allowed"
                         >
                             {loading ? "Connexion..." : "LOGIN"}
                         </button>
-                        <div className="mt-4">
-    <button
-        type="button"
-        onClick={() => navigate("/admin/login")}
-        className="inline-flex w-full items-center justify-center rounded-2xl border border-indigo-600 px-5 py-3 font-semibold text-indigo-600 bg-white shadow-sm transition hover:translate-y-[1px] hover:bg-indigo-50 focus:outline-none focus:ring-4 focus:ring-indigo-200"
-    >
-        Accès Admin
-    </button>
-</div>
+
+                        <div className="flex flex-col gap-3">
+                            <button
+                                type="button"
+                                onClick={() => navigate("/admin/login")}
+                                className="w-full rounded-2xl border-2 border-indigo-600 bg-transparent px-6 py-3 font-semibold text-indigo-600 transition duration-200 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-indigo-300"
+                            >
+                                Accès Admin
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => navigate("/login-secretaire")}
+                                className="w-full rounded-2xl border-2 border-indigo-600 bg-transparent px-6 py-3 font-semibold text-indigo-600 transition duration-200 hover:bg-indigo-600 hover:text-white focus:outline-none focus:ring-4 focus:ring-indigo-300"
+                            >
+                                Accès Secretaire
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

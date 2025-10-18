@@ -119,7 +119,7 @@ export default function AjouterPatients() {
       });
 
       setSuccessMsg("Patient ajouté avec succès !");
-      setTimeout(() => navigate("/ListePatients"), 1200);
+      setTimeout(() => navigate("/secretaire/ListePatients"), 1200);
     } catch (err) {
       const msg = err?.response?.data?.message || "Erreur lors de l'ajout du patient";
       setServerError(msg);

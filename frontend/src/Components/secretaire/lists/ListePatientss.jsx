@@ -132,7 +132,7 @@ export default function ListePatientss() {
     };
 
     // —— Add —— //
-    const handleAddPatient = () => navigate("/add-patient");
+    const handleAddPatient = () => navigate("/secretaire/add-patient");
 
     // —— UI —— //
     if (loading || authLoading) {

@@ -84,7 +84,7 @@ export default function ListeDentistes() {
                             <table className="min-w-full border-separate border-spacing-y-2">
                                 <thead>
                                 <tr>
-                                    {["Nom", "Email", "Spécialité", "Actions"].map((h) => (
+                                    {["Nom","preom","Email","adresse","numero", "Spécialité", "Actions"].map((h) => (
                                         <th key={h} className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
                                             {h}
                                         </th>

@@ -6,10 +6,10 @@ import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
 // ➕ Créer un dentiste
 export const createDentiste = async (req, res) => {
   try {
-    const { nom, email, motDePasse, specialite } = req.body;
+    const { nom, prenom,email,numero, adresse,motDePasse, specialite } = req.body;
 
     // Créer l'utilisateur avec rôle dentiste
-    const newUser = await createUserGeneric({ nom, email, motDePasse, role: "dentiste" });
+    const newUser = await createUserGeneric({ nom,prenom, email,adresse,numero, motDePasse, role: "dentiste" });
 
     // Associer un enregistrement dentiste
     const newDentiste = await Dentiste.create({

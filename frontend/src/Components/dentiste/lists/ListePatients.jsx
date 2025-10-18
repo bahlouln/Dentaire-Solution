@@ -291,6 +291,13 @@ export default function ListePatients() {
                                                                 >
                                                                     Supprimer
                                                                 </button>
+                                                                {/* Nouveau bouton Diagnostique */}
+                                                                <button
+                                                                    onClick={() => navigate(`/dentiste/diagnostique/${id}`)}
+                                                                    className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                                                                >
+                                                                    Diagnostique
+                                                                </button>
                                                             </>
                                                         )}
                                                     </div>

@@ -67,7 +67,7 @@ export default function AddAppointments() {
       });
 
       setMsg("Rendez-vous créé avec succès ✅");
-      setTimeout(() => navigate("/calendar"), 1200);
+      setTimeout(() => navigate("/secretaire/calendar"), 1200);
     } catch (error) {
       console.error(error);
       setMsg(error.response?.data?.message || "Erreur lors de la création");
@@ -85,7 +85,7 @@ export default function AddAppointments() {
           <h2 className="text-xl font-bold text-gray-800">Nouveau rendez-vous</h2>
           <button
             type="button"
-            onClick={() => navigate("/add-patient")}
+            onClick={() => navigate("/secretaire/add-patient")}
             className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 transition duration-200"
           >
             Nouveau patient ?

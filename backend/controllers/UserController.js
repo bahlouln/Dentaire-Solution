@@ -2,7 +2,7 @@ import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 
 // Fonction générique de création d'utilisateur
-export const createUserGeneric = async ({ nom, email, motDePasse, role }) => {
+export const createUserGeneric = async ({ nom,prenom, email, adresse,numero,motDePasse, role }) => {
   if (!nom || !email || !motDePasse) {
     throw new Error("Champs requis manquants");
   }
@@ -12,6 +12,9 @@ export const createUserGeneric = async ({ nom, email, motDePasse, role }) => {
 
   const newUser = await User.create({
     nom,
+    prenom,
+    adresse,
+    numero,
     email,
     motDePasse,
     role: role || "dentiste",
@@ -23,8 +26,8 @@ export const createUserGeneric = async ({ nom, email, motDePasse, role }) => {
 // ➕ Créer un utilisateur (API)
 export const createUser = async (req, res) => {
   try {
-    const { nom, email, motDePasse, role } = req.body;
-    const newUser = await createUserGeneric({ nom, email, motDePasse, role });
+    const { nom,prenom,adresse,numero, email, motDePasse, role } = req.body;
+    const newUser = await createUserGeneric({ nom, prenom,adresse,numero,email, motDePasse, role });
     res.status(201).json(newUser);
   } catch (error) {
     console.error(error);

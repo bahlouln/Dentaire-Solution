@@ -182,6 +182,13 @@ export default function RendezVousCalendar() {
         >
             ➕ Nouveau rendez-vous
         </button>
+        <button
+            onClick={() => navigate("/certification")}
+            className="rounded-xl bg-amber-600 px-3 py-2 text-white hover:bg-amber-500"
+   >
+    🩺 Créer certification
+</button>
+
     </div>
 </div>
 

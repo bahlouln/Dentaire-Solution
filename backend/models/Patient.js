@@ -14,6 +14,7 @@ const Patient = db.define("Patient", {
   email: {
     type: DataTypes.STRING,
     unique: true,
+    allowNull: true,
     validate: { isEmail: true },
   },
   telephone: {

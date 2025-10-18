@@ -75,7 +75,7 @@ export default function RendezVousCalendar() {
 
     // — Création de rendez-vous — //
     const handleDateClick = (info) => {
-        navigate(`secretaire/add-appointments/${info.dateStr}`);
+        navigate(`/secretaire/add-appointments/${info.dateStr}`);
     };
 
     // — Suppression de rendez-vous — //
@@ -162,14 +162,13 @@ export default function RendezVousCalendar() {
 
     return (
         <div className="flex min-h-screen bg-slate-50">
-            <SidebarComponent />
             <main className="flex-1 flex flex-col p-4 sm:p-6 lg:p-8">
              
                 <section className="mt-4 rounded-2xl border border-slate-200 bg-white/80 shadow-sm backdrop-blur flex-1 flex flex-col">
                     <div className="sticky top-0 z-10 flex items-center justify-between gap-3 rounded-t-2xl border-b border-slate-200 bg-gradient-to-r from-indigo-50 to-sky-50 px-5 py-4">
                         <h2 className="text-lg font-semibold text-slate-900">Calendrier des rendez‑vous</h2>
                         <button
-                            onClick={() => navigate("secretaire/add-appointments")}
+                            onClick={() => navigate("/secretaire/add-appointments")}
                             className="rounded-xl bg-indigo-600 px-3 py-2 text-white hover:bg-indigo-500"
                         >
                             Nouveau rendez‑vous
@@ -191,7 +190,7 @@ export default function RendezVousCalendar() {
                                     Ajoute ton premier rendez‑vous en cliquant sur une date dans le calendrier ou via le bouton ci‑dessus.
                                 </p>
                                 <button
-                                    onClick={() => navigate("secretaire/add-appointments")}
+                                    onClick={() => navigate("/secretaire/add-appointments")}
                                     className="mt-1 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
                                 >
                                     Créer un rendez‑vous

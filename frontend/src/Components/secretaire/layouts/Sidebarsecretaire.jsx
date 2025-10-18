@@ -3,7 +3,6 @@ import { NavLink, useNavigate } from "react-router-dom";
 import {
     HiInbox,
     HiShoppingBag,
-    HiUser,
     HiViewBoards,
     HiMenu,
     HiX,
@@ -16,7 +15,7 @@ export default function Sidebarsecretaire() {
 
     const items = [
 
-        { to: "/calendar", label: "calendrier", icon: HiInbox },
+        { to: "/secretaire/calendar", label: "calendrier", icon: HiInbox },
         { to: "/secretaire/ListePatients", label: "Patients", icon: HiShoppingBag },
 
     ];

@@ -38,11 +38,13 @@ function PasswordField({ formData, errors, onChange, onBlur, showPwd, setShowPwd
       <label htmlFor="motDePasse" className="text-sm font-medium text-slate-700">
         Mot de passe <span className="text-rose-600">*</span>
       </label>
-      <div className={[
-        "flex items-stretch rounded-xl border bg-white shadow-sm",
-        errors.motDePasse ? "border-rose-400" : "border-slate-300",
-        "focus-within:ring-4 focus-within:ring-indigo-100 focus-within:border-indigo-500"
-      ].join(" ")}>
+      <div
+        className={[
+          "flex items-stretch rounded-xl border bg-white shadow-sm",
+          errors.motDePasse ? "border-rose-400" : "border-slate-300",
+          "focus-within:ring-4 focus-within:ring-indigo-100 focus-within:border-indigo-500",
+        ].join(" ")}
+      >
         <input
           id="motDePasse"
           name="motDePasse"
@@ -72,7 +74,15 @@ export default function AjouterSecretaire() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
 
-  const [formData, setFormData] = useState({ nom: "", email: "", motDePasse: "", bureau: "" });
+  const [formData, setFormData] = useState({
+    nom: "",
+    prenom: "",
+    email: "",
+    motDePasse: "",
+    adresse: "",
+    numero: "",
+    bureau: "",
+  });
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -81,38 +91,46 @@ export default function AjouterSecretaire() {
 
   // —— Validators —— //
   const validators = {
-    nom: v => (v?.trim().length >= 2 ? "" : "Le nom doit contenir au moins 2 caractères."),
-    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v || "") ? "" : "Adresse e-mail invalide.",
-    motDePasse: v => {
+    nom: (v) => (v?.trim().length >= 2 ? "" : "Le nom doit contenir au moins 2 caractères."),
+    prenom: (v) => (v?.trim().length >= 2 ? "" : "Le prénom doit contenir au moins 2 caractères."),
+    email: (v) => (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v || "") ? "" : "Adresse e-mail invalide."),
+    motDePasse: (v) => {
       if (!v || v.length < 8) return "Au moins 8 caractères.";
       if (!/[a-z]/.test(v)) return "Inclure une minuscule.";
       if (!/[A-Z]/.test(v)) return "Inclure une majuscule.";
       if (!/[0-9]/.test(v)) return "Inclure un chiffre.";
       return "";
     },
-    bureau: _ => "",
+    adresse: (v) => (v?.trim().length >= 5 ? "" : "Adresse invalide."),
+    numero: (v) => (/^[0-9]{8}$/.test(v || "") ? "" : "Le numéro doit contenir 8 chiffres."),
+    bureau: (_) => "",
   };
 
   const validateField = (name, value) => validators[name]?.(value) || "";
-  const validateAll = data => Object.keys(validators).reduce((acc, k) => {
-    const msg = validateField(k, data[k]);
-    if (msg) acc[k] = msg;
-    return acc;
-  }, {});
+  const validateAll = (data) =>
+    Object.keys(validators).reduce((acc, k) => {
+      const msg = validateField(k, data[k]);
+      if (msg) acc[k] = msg;
+      return acc;
+    }, {});
 
-  const onChange = e => {
+  const onChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    setServerError(""); setSuccessMsg("");
+    setServerError("");
+    setSuccessMsg("");
   };
-  const onBlur = e => {
+
+  const onBlur = (e) => {
     const { name, value } = e.target;
     setErrors({ ...errors, [name]: validateField(name, value) });
   };
 
   // —— Submit —— //
-  const onSubmit = async e => {
+  const onSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation
     const found = validateAll(formData);
     setErrors(found);
     if (Object.keys(found).length) return;
@@ -126,21 +144,32 @@ export default function AjouterSecretaire() {
     setServerError("");
 
     try {
-      // ⚡ Remplace l'URL par la tienne ou utilise import.meta.env.VITE_API_URL si Vite
+      // Nettoyage du payload pour éviter null
+      const payload = {
+        nom: formData.nom.trim(),
+        prenom: formData.prenom.trim(),
+        email: formData.email.trim(),
+        motDePasse: formData.motDePasse,
+        adresse: formData.adresse.trim(),
+        numero: formData.numero.trim(),
+        bureau: formData.bureau?.trim() || null,
+      };
+
       const response = await axios.post(
         "http://localhost:5000/api/dentistes/secretaires",
-        formData,
+        payload,
         { headers: { Authorization: `Bearer ${user.token}` } }
       );
+
       setSuccessMsg("Secrétaire ajoutée avec succès !");
       setTimeout(() => navigate("/ListeSecretaires"), 1200);
     } catch (err) {
-      console.error(err);
+      console.error("Erreur backend createSecretaire:", err.response || err);
       if (err.response?.status === 401) {
         logout();
         navigate("/login");
       } else {
-        setServerError(err.response?.data?.message || "Erreur lors de l'ajout de la secrétaire");
+        setServerError(err.response?.data?.message || "Erreur serveur lors de la création de la secrétaire");
       }
     } finally {
       setIsSubmitting(false);
@@ -162,15 +191,20 @@ export default function AjouterSecretaire() {
 
         <form onSubmit={onSubmit} noValidate className="px-5 py-6">
           <div className="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2">
-            <Field name="nom" label="Nom" required placeholder="Ex. Ben Salah" autoComplete="name" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
-            <Field name="email" label="Email" type="email" required placeholder="exemple@mail.com" autoComplete="email" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
+            <Field name="nom" label="Nom" required autoComplete="name" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
+            <Field name="prenom" label="Prénom" required autoComplete="given-name" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
+            <Field name="email" label="Email" type="email" required autoComplete="email" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
+            <Field name="adresse" label="Adresse" required placeholder="Rue, Ville" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
+            <Field name="numero" label="Numéro de téléphone" required placeholder="Ex. 50123456" autoComplete="tel" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
             <PasswordField formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} showPwd={showPwd} setShowPwd={setShowPwd} />
             <Field name="bureau" label="Bureau (facultatif)" placeholder="Ex. B-203" autoComplete="off" formData={formData} errors={errors} onChange={onChange} onBlur={onBlur} />
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-3">
             <button type="button" onClick={() => navigate(-1)} className="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus:outline-none focus:ring-4 focus:ring-slate-100">Annuler</button>
-            <button type="submit" disabled={isSubmitting} className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60">{isSubmitting ? "Enregistrement…" : "Ajouter"}</button>
+            <button type="submit" disabled={isSubmitting} className="inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold shadow-sm bg-indigo-600 text-white hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:opacity-60">
+              {isSubmitting ? "Enregistrement…" : "Ajouter"}
+            </button>
           </div>
         </form>
       </div>

@@ -27,7 +27,8 @@ import Sidebardentiste from "./Components/dentiste/layouts/Sidebardentiste.jsx";
 import Navbardentiste from "./Components/dentiste/layouts/Navbardentiste.jsx";
 import Sidebarsecretaire from "./Components/secretaire/layouts/Sidebarsecretaire.jsx";
 import Navbarsecretaire from "./Components/secretaire/layouts/Navbarsecreataire.jsx";
-import CreateOrdonnance from "./Components/CreateOrdonnace.jsx";
+import CreateOrdonnance from "./Components/dentiste/CreateOrdonnace.jsx";
+import CreateCertification from "./Components/dentiste/CreateCertification.jsx";
 
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
@@ -133,6 +134,7 @@ export default function App() {
           <Route path="add-patient" element={<AjouterPatient />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="ordonnance" element={<CreateOrdonnance />} />
+          <Route path="certification" element={<CreateCertification />} />
 
         </Route>
 
@@ -140,7 +142,7 @@ export default function App() {
         <Route path="secretaire" element={<SecretaireLayout />}>
           <Route index element={<Navigate to="calendar" replace />} />
           <Route path="calendar" element={<RendezVousCalendars />} />
-          <Route path="add-appointments" element={<AddAppointments />} />
+          <Route path="add-appointments/:dateStr?" element={<AddAppointments />} />
           <Route path="ListePatients" element={<ListePatientss />} />
           <Route path="add-patient" element={<AjouterPatients />} />
         </Route>

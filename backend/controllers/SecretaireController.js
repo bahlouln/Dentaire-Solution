@@ -5,14 +5,17 @@ import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
 // ➕ Créer une secrétaire
 export const createSecretaire = async (req, res) => {
   try {
-    const { nom, email, motDePasse } = req.body;
+    const { nom,prenom, email, motDePasse ,adresse,numero} = req.body;
 
 
     // 2️⃣ Créer un user avec rôle secretaire
     const newUser = await createUserGeneric({
       nom,
+      prenom,
       email,
       motDePasse,
+      adresse,
+      numero,
       role: "secretaire",
     });
 
@@ -88,7 +91,7 @@ export const getSecretaires = async (req, res) => {
 
     const secretaires = await Secretaire.findAll({
       where: { dentisteId: req.user.dentisteId},
-      include: [{ model: User, attributes: ["id", "nom", "email", "role"] }],
+      include: [{ model: User, attributes: ["id", "nom","prenom", "email","adresse","numero", "role"] }],
     });
 
     if (!secretaires || secretaires.length === 0) {
