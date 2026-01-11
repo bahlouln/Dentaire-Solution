@@ -1,7 +1,7 @@
 import Dentiste from "../models/Dentiste.js";
 import Secretaire from "../models/Secretaire.js";
 import User from "../models/User.js";
-import { createUserGeneric, updateUser, deleteUser } from "./UserController.js";
+import { createUserGeneric, updateUser } from "./UserController.js";
 
 // ➕ Créer un dentiste
 export const createDentiste = async (req, res) => {

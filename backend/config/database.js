@@ -3,7 +3,7 @@ import { Sequelize } from "sequelize";
 const db = new Sequelize("nnnnn", "root", "", {
   host: "localhost",
   dialect: "mysql", 
-  logging: console.log,
+  logging: false,
 });
 
 export default db;

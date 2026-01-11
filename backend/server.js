@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import cors from "cors";
 import AdminRoutes from "./routes/admin.js";
 import AgendaRoutes    from "./routes/agenda.js";
-
+import diagnostiqueRoutes from "./routes/diagnostiqueRoutes.js";
 dotenv.config();
 const app = express();
 
@@ -27,14 +27,14 @@ app.use("/api/secretaires", SecretaireRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", AdminRoutes);
 app.use("/api/agenda", AgendaRoutes);
+app.use("/api/diagnostique",diagnostiqueRoutes);
 
 // Connexion DB et synchronisation
 try {
   await db.authenticate();
   console.log("✅ Connexion à la base réussie !");
 
-  // 🔹 Crée toutes les tables définies dans les modèles si elles n'existent pas
-  await db.sync({ alter: true });
+await db.sync({ alter: true });
   console.log("✅ Modèles synchronisés avec succès !");
 } catch (error) {
   console.error("❌ Erreur de connexion ou synchronisation :", error);

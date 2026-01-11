@@ -3,6 +3,7 @@ import express from "express";
 import { createPatient, deletePatient, getPatients,updatePatient } from "../controllers/patientController.js";
 import { createSecretaire, deleteSecretaire, getSecretaires,  updateSecretaire } from "../controllers/SecretaireController.js";
 import { authenticateToken } from "./AuthRoutes.js";
+import { createDiagnostique, deleteDiagnostique, getDiagnostiqueById, getDiagnostiquesByPatient, updateDiagnostique } from "../controllers/DiagnostiqueController.js";
 const router = express.Router();
 
 // --- Middlewares ---
@@ -38,6 +39,11 @@ router.delete("/secretaires/:id", deleteSecretaire);
 
 
 
+router.post("/diagnostique", createDiagnostique);
+router.get("/diagnostique/:patientId", getDiagnostiquesByPatient);
+router.get("/diagnostique/:id", getDiagnostiqueById);
+router.put("/diagnostique/:id", updateDiagnostique);
+router.delete("/diagnostique/:id", deleteDiagnostique);
 
 
 

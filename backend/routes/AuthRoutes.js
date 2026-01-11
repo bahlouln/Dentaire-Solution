@@ -58,6 +58,8 @@ router.post("/login", async (req, res) => {
         nom: user.nom,
         prenom: user.prenom,
         role: user.role,
+        numero: user.numero,  
+
         ...(payload.dentisteId ? { dentisteId: payload.dentisteId } : {}),
       },
     });

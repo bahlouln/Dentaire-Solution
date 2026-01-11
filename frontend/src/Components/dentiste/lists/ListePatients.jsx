@@ -293,11 +293,12 @@ export default function ListePatients() {
                                                                 </button>
                                                                 {/* Nouveau bouton Diagnostique */}
                                                                 <button
-                                                                    onClick={() => navigate(`/dentiste/diagnostique/${id}`)}
+                                                                    onClick={() => navigate(`/diagnostique/${id}`)} // id = patient.id ou patient._id
                                                                     className="inline-flex items-center justify-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-200"
-                                                                >
+                                                                    >
                                                                     Diagnostique
-                                                                </button>
+                                                                    </button>
+
                                                             </>
                                                         )}
                                                     </div>

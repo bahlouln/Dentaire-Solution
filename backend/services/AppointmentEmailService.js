@@ -24,11 +24,30 @@ export default class AppointmentEmailService {
   }
 
   getDentistName(d) {
-    if (!d) return 'Dentiste';
-    if (d.titre && (d.nom || d.prenom)) return `${d.titre} ${d.prenom || ''} ${d.nom || ''}`.trim();
-    if (d.user?.nom || d.user?.prenom) return `${d.user?.prenom || ''} ${d.user?.nom || ''}`.trim();
-    return d.nom || d.prenom || 'Dentiste';
+  if (!d) return 'Dentiste';
+
+  // Prioritize User association if available
+  const user = d.User || {};
+  const userPrenom = user.prenom || '';
+  const userNom    = user.nom || '';
+  const userTitre  = user.titre || '';
+
+  if (userPrenom || userNom) {
+    return `${userTitre} ${userPrenom} ${userNom}`.trim();
   }
+
+  // Fallback to Dentiste fields
+  const dentPrenom = d.prenom || '';
+  const dentNom    = d.nom || '';
+  const dentTitre  = d.titre || '';
+
+  if (dentPrenom || dentNom) {
+    return `${dentTitre} ${dentPrenom} ${dentNom}`.trim();
+  }
+
+  return 'Dentiste';
+}
+
 
   // Utilitaire format date/heure FR (ou ar-TN en option)
   formatDateTime(dt, locale = 'fr-FR', tz = 'Africa/Tunis') {
@@ -50,18 +69,19 @@ export default class AppointmentEmailService {
   /**
    * Envoie un email au dentiste quand un RDV est créé.
    * @param {Object} payload
-   * @param {Object} payload.dentiste   (doit contenir email ou user.email)
+   * @param {Object} payload.dentiste   (doit contenir User association avec email)
    * @param {Object} payload.patient    (nom/prenom/tel/email, etc.)
    * @param {Object} payload.rendezvous ({ id, dateDebut, dateFin, notes, createdBy })
    * @returns Promise<{success:boolean, reason?:string, error?:string}>
    */
   async sendAppointmentCreated({ dentiste, patient, rendezvous }) {
-    const toEmail =
-      dentiste?.email ||
-      dentiste?.user?.email ||
-      dentiste?.User?.email; // selon ORM
+    // Access email through User association
+    const toEmail = dentiste?.User?.email;
 
-    if (!toEmail) return { success: false, reason: 'dentist_no_email' };
+    if (!toEmail) {
+      console.warn('⚠️ No email found for dentist:', dentiste);
+      return { success: false, reason: 'dentist_no_email' };
+    }
     if (!this.serviceId || !this.templateId || !this.publicKey || !this.privateKey) {
       return { success: false, reason: 'emailjs_not_configured' };
     }
@@ -78,11 +98,8 @@ export default class AppointmentEmailService {
       dentist_name: this.getDentistName(dentiste),
       patient_name: this.getPersonName(patient),
       appt_datetime: this.formatDateTime(rendezvous?.dateDebut),
-      appt_datetime_end: rendezvous?.dateFin ? this.formatDateTime(rendezvous?.dateFin) : '',
       appt_notes: rendezvous?.notes || '',
-      created_by: this.getPersonName(rendezvous?.createdBy) || 'Système',
       app_name: this.appName,
-      app_url: this.appUrl,
 
       // timestamp d’envoi
       sent_at: this.formatDateTime(new Date())
@@ -97,6 +114,7 @@ export default class AppointmentEmailService {
       );
 
       console.log('✅ Email RDV -> dentiste:', toEmail, resp?.status, resp?.text);
+      console.log('   Params:', params);
       return { success: true, recipient: toEmail, status: resp?.status, messageId: resp?.text };
     } catch (err) {
       const errText = err?.text || err?.message || String(err);

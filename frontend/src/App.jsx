@@ -29,6 +29,7 @@ import Sidebarsecretaire from "./Components/secretaire/layouts/Sidebarsecretaire
 import Navbarsecretaire from "./Components/secretaire/layouts/Navbarsecreataire.jsx";
 import CreateOrdonnance from "./Components/dentiste/CreateOrdonnace.jsx";
 import CreateCertification from "./Components/dentiste/CreateCertification.jsx";
+import PatientDiagnostiques from "./Components/dentiste/forms/PatientDiagnostiques.jsx";
 
 // ---------- Helpers auth ----------
 const getToken = () => localStorage.getItem("token");
@@ -121,7 +122,7 @@ export default function App() {
         <Route path="add-dentiste" element={<AddDentistes />} />
       </Route>
 
-      {/* Routes dentiste protégées */}
+       {/* Routes dentiste protégées */}
       <Route element={<RequireAuth />}>
         <Route path="/" element={<DentisteLayout />}>
           <Route index element={<Navigate to="calendar" replace />} />
@@ -135,8 +136,9 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="ordonnance" element={<CreateOrdonnance />} />
           <Route path="certification" element={<CreateCertification />} />
-
+          <Route path="diagnostique/:patientId" element={<PatientDiagnostiques />} />
         </Route>
+     
 
         {/* Routes secrétaire protégées */}
         <Route path="secretaire" element={<SecretaireLayout />}>

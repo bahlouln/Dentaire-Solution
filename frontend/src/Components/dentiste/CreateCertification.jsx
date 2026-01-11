@@ -15,10 +15,7 @@ export default function CreateCertification() {
   // Charger les patients du dentiste connecté
   useEffect(() => {
     const fetchPatients = async () => {
-      if (!token) {
-        setMsg("❌ Vous devez vous reconnecter");
-        return;
-      }
+      
 
       try {
         const res = await axios.get("http://localhost:5000/api/dentistes/patients", {
@@ -29,7 +26,7 @@ export default function CreateCertification() {
         setPatients(data || []);
       } catch (error) {
         console.error("Erreur lors du chargement des patients:", error);
-        setMsg("Impossible de charger les patients ❌");
+        
       }
     };
 
@@ -64,13 +61,14 @@ export default function CreateCertification() {
     doc.setFontSize(14);
     doc.text("Cabinet du dentiste " + (user.nom || "") + " " + (user.prenom || ""), 20, 15);
     doc.setFontSize(10);
-    doc.text(`Tél: ${user.numero|| "N/A"}`, 20, 25);
+    doc.text("Tél:"+ (user.numero|| "N/A"), 20, 25);
 
     // Logo
     const logoImg = new Image();
     logoImg.src = "/logo.jpg";
     doc.addImage(logoImg, "JPEG", 160, 5, 40, 30);
 
+    
     // Titre
     doc.setFillColor(230, 230, 250);
     doc.rect(50, 45, 110, 20, "F");
@@ -80,9 +78,7 @@ export default function CreateCertification() {
     // Infos patient
     doc.setFontSize(12);
     doc.text(`Nom du patient : ${patient.name || "Non spécifié"}`, 20, 80);
-    doc.text(`Âge : ${patient.age || "Non spécifié"}`, 20, 90);
-    doc.text(`Adresse : ${patient.address || "Non spécifiée"}`, 20, 100);
-
+   
     // Objet et description
     doc.text(`Objet : ${certif.objet || "Non spécifié"}`, 20, 120);
     doc.text("Description :", 20, 130);
@@ -104,7 +100,7 @@ export default function CreateCertification() {
 
   // Annuler
   const handleCancel = () => {
-    setPatient({ name: "", age: "", address: "" });
+    setPatient({ name: ""});
     setCertif({ objet: "", description: "" });
   };
 
@@ -144,25 +140,7 @@ export default function CreateCertification() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-gray-600">Âge :</label>
-              <input
-                type="text"
-                value={patient.age}
-                onChange={(e) => handlePatientChange("age", e.target.value)}
-                className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-gray-600">Adresse :</label>
-              <input
-                type="text"
-                value={patient.address}
-                onChange={(e) => handlePatientChange("address", e.target.value)}
-                className="border border-gray-300 p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+           
           </div>
         </div>
 

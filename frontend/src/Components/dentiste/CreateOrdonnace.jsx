@@ -31,10 +31,7 @@ export default function CreateOrdonnance() {
   // 🚀 Charger les patients du dentiste connecté
   useEffect(() => {
     const fetchPatients = async () => {
-      if (!token) {
-        setMsg("❌ Vous devez vous reconnecter");
-        return;
-      }
+      
 
       try {
         const res = await axios.get("http://localhost:5000/api/dentistes/patients", {
@@ -45,7 +42,6 @@ export default function CreateOrdonnance() {
         setPatients(data || []);
       } catch (error) {
         console.error("Erreur lors du chargement des patients:", error);
-        setMsg("Impossible de charger les patients ❌");
       }
     };
 
